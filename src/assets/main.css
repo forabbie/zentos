@@ -1,29 +1,23 @@
 @import 'tailwindcss';
 
 @import './base.css';
-
-#app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  font-weight: normal;
-}
+@import './tailwind.css';
 
 a,
 .green {
   text-decoration: none;
   color: hsla(160, 100%, 37%, 1);
   transition: 0.4s;
-  padding: 3px;
+  /* padding: 3px; */
 }
 
 @media (hover: hover) {
-  a:hover {
+  /* a:hover {
     background-color: hsla(160, 100%, 37%, 0.2);
-  }
+  } */
 }
 
-@media (min-width: 1024px) {
+/* @media (min-width: 1024px) {
   body {
     display: flex;
     place-items: center;
@@ -34,4 +28,49 @@ a,
     grid-template-columns: 1fr 1fr;
     padding: 0 2rem;
   }
+} */
+
+/* .left-sidebar-wrapper {
+  @apply border border-l border-slate-300;
+} */
+
+.flex-col-justify-item-center {
+  @apply flex flex-col items-center justify-center;
+}
+
+.flex-justify-items-center {
+  @apply flex flex-col items-center justify-center;
+}
+
+.flex-col-items-center {
+  @apply flex flex-col items-center;
+}
+
+.flex-items-center {
+  @apply flex flex-row items-center;
+}
+
+/* HOME PAGE */
+.app {
+  @apply flex h-screen w-screen flex-row;
+}
+
+.left-sidebar {
+  @apply flex flex-col border border-l border-slate-300;
+}
+
+.left-sidebar > .nav {
+  @apply flex flex-col items-center;
+}
+
+.logo-wrapper {
+  @apply w-full;
+}
+
+.logo-container {
+  @apply m-2.5 flex items-center justify-center;
+}
+
+.nav-item > .link {
+  @apply flex flex-col items-center justify-center;
 }
