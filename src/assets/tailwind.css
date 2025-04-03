@@ -1,6 +1,19 @@
 @theme {
   --color-avocado: RGBA(0, 204, 102, 1);
+
   --color-midnight: #121063;
   --color-tahiti: #3ab7bf;
   --color-bermuda: #78dcca;
+
+  --color-primary-100: #def8cf;
+  --color-primary-200: #bef2a4;
+  --color-primary-300: #95e76f;
+  --color-primary-400: #71d843;
+  --color-primary-50: #f0fce9;
+  --color-primary-500: #50be24;
+  --color-primary-600: #41a71b;
+  --color-primary-700: #2f7417;
+  --color-primary-800: #295c18;
+  --color-primary-900: #254e19;
+  --color-primary-950: #0f2b08;
 }

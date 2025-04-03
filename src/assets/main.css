@@ -50,21 +50,17 @@ a,
   @apply flex flex-row items-center;
 }
 
-/* HOME PAGE */
 .app {
   @apply flex h-screen w-screen flex-row;
 }
 
+/* START: Sidebar */
 .left-sidebar {
-  @apply flex flex-col border border-l border-slate-300;
+  @apply flex flex-col border-r border-slate-300;
 }
 
 .left-sidebar > .nav {
   @apply flex flex-col items-center;
-}
-
-.logo-wrapper {
-  @apply w-full;
 }
 
 .logo-container {
@@ -74,3 +70,7 @@ a,
 .nav-item > .link {
   @apply flex flex-col items-center justify-center;
 }
+/* END: Sidebar */
+
+/* Start: App Header */
+/* End: App Header */
