@@ -25,28 +25,6 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-hr {
-  @apply text-slate-300;
-}
-
 .app {
   @apply flex h-screen w-screen flex-row;
 }
-
-/* START - Layout */
-.flex-col-justify-item-center {
-  @apply flex flex-col items-center justify-center;
-}
-
-.flex-justify-items-center {
-  @apply flex flex-col items-center justify-center;
-}
-
-.flex-col-items-center {
-  @apply flex flex-col items-center;
-}
-
-.flex-items-center {
-  @apply flex flex-row items-center;
-}
-/* END - Layout */
