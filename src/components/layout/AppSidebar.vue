@@ -14,12 +14,14 @@
         <ul class="flex w-full flex-col gap-2">
           <li v-for="item in routes" :key="item.label" class="nav-item">
             <RouterLink :to="item.route" class="link group" :aria-label="item.label">
-              <div class="icon-wrapper group-hover:bg-indigo-400/25">
-                <i aria-hidden="true">
+              <div
+                class="icon-wrapper group-hover:bg-indigo-100/25 group-hover:shadow-sm group-hover:shadow-indigo-300/25"
+              >
+                <i aria-hidden="true" class="group-hover:text-indigo-600">
                   <component :is="item.icon" />
                 </i>
               </div>
-              <span class="label text-2xs">{{ item.label }}</span>
+              <span class="label text-2xs group-hover:text-indigo-600">{{ item.label }}</span>
             </RouterLink>
           </li>
         </ul>
@@ -36,25 +38,24 @@ import BaseDivider from '@/components/common/BaseDivider.vue'
 import IconDashboard from '@/components/icons/IconDashboard.vue'
 import IconSwapHorizontal from '@/components/icons/IconSwapHorizontal.vue'
 import WalletIcon from '@/components/icons/IconWallet.vue'
-import { ref } from 'vue'
 
-const routes = ref([
+const routes = [
   {
     label: 'Dashboard',
     icon: IconDashboard,
     route: '/dashboard',
   },
   {
-    label: 'Activity',
+    label: 'Activities',
     icon: IconSwapHorizontal,
     route: '/',
   },
   {
-    label: 'Wallet',
+    label: 'Wallets',
     icon: WalletIcon,
     route: '/',
   },
-])
+]
 </script>
 
 <style scoped>
@@ -73,7 +74,7 @@ const routes = ref([
 }
 
 i {
-  @apply size-4.5 group-hover:scale-125;
+  @apply size-5 group-hover:scale-125;
   display: flex;
   place-items: center;
   place-content: center;
