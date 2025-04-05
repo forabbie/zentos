@@ -13,7 +13,12 @@
       <nav class="nav p-2.5" role="navigation" aria-label="Main menu">
         <ul class="flex w-full flex-col gap-2">
           <li v-for="item in routes" :key="item.label" class="nav-item">
-            <RouterLink :to="item.route" class="link group" :aria-label="item.label">
+            <router-link
+              :to="item.route"
+              class="link group"
+              :aria-label="item.label"
+              active-class="router-link-active"
+            >
               <div
                 class="icon-wrapper group-hover:bg-indigo-100/25 group-hover:shadow-sm group-hover:shadow-indigo-300/25"
               >
@@ -22,7 +27,7 @@
                 </i>
               </div>
               <span class="label text-2xs group-hover:text-indigo-600">{{ item.label }}</span>
-            </RouterLink>
+            </router-link>
           </li>
         </ul>
       </nav>
@@ -38,32 +43,29 @@ import BaseDivider from '@/components/common/BaseDivider.vue'
 import IconDashboard from '@/components/icons/IconDashboard.vue'
 import IconSwapHorizontal from '@/components/icons/IconSwapHorizontal.vue'
 import WalletIcon from '@/components/icons/IconWallet.vue'
+import { markRaw } from 'vue'
 
 const routes = [
   {
     label: 'Dashboard',
-    icon: IconDashboard,
+    icon: markRaw(IconDashboard),
     route: '/dashboard',
   },
   {
     label: 'Activities',
-    icon: IconSwapHorizontal,
-    route: '/',
+    icon: markRaw(IconSwapHorizontal),
+    route: '/transactions',
   },
   {
     label: 'Wallets',
-    icon: WalletIcon,
-    route: '/',
+    icon: markRaw(WalletIcon),
+    route: '/wallets',
   },
 ]
 </script>
 
 <style scoped>
 @reference "tailwindcss";
-
-.text-2xs {
-  font-size: 0.5em;
-}
 
 .logo-wrapper {
   @apply m-2.5 flex items-center justify-center;
@@ -90,5 +92,17 @@ i {
 
 .link > .label {
   @apply mt-1 font-semibold;
+}
+
+.router-link-active {
+  @apply text-indigo-600;
+}
+
+.router-link-active .icon-wrapper {
+  @apply bg-indigo-100/25 shadow-sm shadow-indigo-400/25;
+}
+
+.router-link-active i {
+  @apply scale-125;
 }
 </style>

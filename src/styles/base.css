@@ -28,3 +28,14 @@ body {
 .app {
   @apply flex h-screen w-screen flex-row;
 }
+
+.text-2xs {
+  font-size: 0.5em;
+}
+.card {
+  @apply rounded-lg bg-white p-4 shadow-md;
+}
+
+.card-title {
+  @apply text-xl font-bold;
+}
