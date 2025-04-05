@@ -1,5 +1,5 @@
 const now = new Date()
-const year = now.getFullYear()
+export const year = now.getFullYear()
 const month = (now.getMonth() + 1).toString().padStart(2, '0')
 export const currentMonth = `${year}-${month}`
 

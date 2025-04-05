@@ -2,7 +2,7 @@
   <div class="flex items-end justify-between">
     <div class="flex flex-col">
       <h2 class="text-xl font-bold">Overview</h2>
-      <p>Get summary of your weekly online transactions here.</p>
+      <p>Get summary of your monthly online transactions here.</p>
     </div>
     <div class="flex justify-center">
       <DatePicker

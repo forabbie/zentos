@@ -6,26 +6,17 @@
     <div class="flex gap-4">
       <div class="flex h-full w-full flex-col gap-4">
         <Finances />
-        <div class="hidden gap-4">
-          <Balance class="card w-full" />
-          <Balance class="card w-full" />
+        <div class="flex gap-4">
+          <Networth class="w-full" />
+          <Savings class="w-full" />
         </div>
-        <div class="card">
-          <Spendings />
+        <div v-if="true">
+          <Transactions />
         </div>
       </div>
-      <div class="card w-1/3">
+      <div class="card w-2/5">
         <Expenses />
       </div>
-      <!-- <div class="col-span-1 row-span-3">
-        <Expenses />
-      </div>
-      <div class="col-span-3">
-        <Transactions />
-      </div>
-      <div class="card col-span-1">
-        <Spendings />
-      </div> -->
     </div>
   </div>
 </template>
@@ -37,4 +28,6 @@ import Spendings from '@/modules/dashboard/Spendings.vue'
 import Expenses from '@/modules/dashboard/Expenses.vue'
 import Transactions from '@/modules/dashboard/Transactions.vue'
 import Balance from '@/modules/dashboard/Balance.vue'
+import Savings from '@/modules/dashboard/Savings.vue'
+import Networth from '@/modules/dashboard/Networth.vue'
 </script>

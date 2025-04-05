@@ -1,5 +1,3 @@
-const headCategories = [{}]
-
 const categories = [
   {
     id: 1,

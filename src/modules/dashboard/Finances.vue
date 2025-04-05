@@ -1,10 +1,10 @@
 <template>
   <div class="flex w-full gap-4">
     <div class="card flex w-full items-center gap-4" v-for="item in items" :key="item.label">
-      <div :class="[item.bg, 'rounded-lg p-2.5']">
+      <div :class="[item.bg, 'rounded-xl p-2.5']">
         <component class="size-10" :is="item.icon" />
       </div>
-      <div :class="{ 'text-red-500': item.balance < 0 }">
+      <div :class="{ 'text-red-500': false }">
         <h2 class="text-2xl font-semibold">{{ formatToPHP(item.balance) ?? 0 }}</h2>
         <p class="text-xs text-gray-500 uppercase">{{ item.label }}</p>
       </div>

@@ -7,7 +7,7 @@
         type="doughnut"
         :data="chartData"
         :options="chartOptions"
-        class="absolute z-10 mb-8 w-full"
+        class="absolute z-10 mb-8 w-full px-8"
       />
       <div class="absolute top-0 right-0 bottom-0 left-0 flex flex-col items-center justify-center">
         <h3 class="text-2xl font-bold text-gray-800">{{ total }}</h3>
@@ -23,7 +23,7 @@
     >
       <div class="flex w-full items-center gap-2">
         <span
-          class="size-4 rounded-xs bg-gray-500 md:mb-0"
+          class="size-4 rounded-sm bg-gray-500 md:mb-0"
           :style="{ backgroundColor: item.color }"
         ></span>
         <div class="text-muted-color flex w-full font-medium capitalize">{{ item.head }}</div>

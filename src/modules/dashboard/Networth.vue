@@ -1,8 +1,8 @@
 <template>
-  <div class="rounded-lg bg-amber-500 shadow-md">
-    <div class="px-4 pt-4 pb-0 text-white">
-      <h2 class="">Spendings</h2>
-      <p class="text-3xl font-bold">$32.023</p>
+  <div class="rounded-lg bg-white shadow-md">
+    <div class="px-4 pt-4 pb-0 text-black">
+      <h2 class="">Net Worth</h2>
+      <p class="text-3xl font-bold">$320.023</p>
     </div>
     <apexchart
       height="100"
@@ -31,7 +31,7 @@ const total_orders_options = computed(() => {
   return {
     chart: { sparkline: { enabled: true } },
     stroke: { curve: 'smooth', width: 2 },
-    colors: is_dark ? ['#EE5F1A'] : ['#fff'],
+    colors: is_dark ? ['#EE5F1A'] : ['#6610f2'],
     labels: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
     yaxis: { min: 0, show: false },
     grid: { padding: { top: 0, right: 0, bottom: 0, left: 0 } },
