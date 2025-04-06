@@ -1,0 +1,13 @@
+.p-button.custom-button {
+  --p-button-padding-x: 1rem;
+  --p-button-padding-y: 0.375rem;
+  /* --p-button-primary-background: var(--color-emerald-500);
+  --p-button-primary-hover-background: var(--color-emerald-400); */
+  --p-button-primary-active-background: var();
+}
+
+.p-button-label.custom-button-label,
+.p-button-icon.custom-button-icon {
+  font-size: 0.875rem;
+  color: var(--color-black);
+}

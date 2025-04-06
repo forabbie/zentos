@@ -37,11 +37,3 @@ const currentDate = new Date()
 const formattedDate = currentDate.toLocaleDateString('en-US')
 const date = ref(formattedDate)
 </script>
-
-<style scoped>
-@reference "tailwindcss";
-
-.p-datepicker-input-icon-container {
-  color: red !important;
-}
-</style>
