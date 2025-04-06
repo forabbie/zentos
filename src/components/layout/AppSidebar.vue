@@ -42,7 +42,7 @@
 import BaseDivider from '@/components/common/BaseDivider.vue'
 import IconDashboard from '@/components/icons/IconDashboard.vue'
 import IconSwapHorizontal from '@/components/icons/IconSwapHorizontal.vue'
-import WalletIcon from '@/components/icons/IconWallet.vue'
+import IconWallet from '@/components/icons/IconWallet.vue'
 import { markRaw } from 'vue'
 
 const routes = [
@@ -58,7 +58,7 @@ const routes = [
   },
   {
     label: 'Wallets',
-    icon: markRaw(WalletIcon),
+    icon: markRaw(IconWallet),
     route: '/wallets',
   },
 ]

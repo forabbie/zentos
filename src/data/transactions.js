@@ -218,7 +218,7 @@ const transactions = [
 ]
 
 import { getCategoryById } from '@/data/categories'
-import { getWalletById } from '@/data/wallets'
+import { getWalletById } from '@/data/wallet'
 
 function mapTransaction(transaction) {
   const category = getCategoryById(transaction.category_id)

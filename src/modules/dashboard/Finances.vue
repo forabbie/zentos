@@ -5,7 +5,7 @@
         <component class="size-10" :is="item.icon" />
       </div>
       <div :class="{ 'text-red-500': false }">
-        <h2 class="text-2xl font-semibold">{{ formatToPHP(item.balance) ?? 0 }}</h2>
+        <h2 class="text-2xl font-semibold">{{ formatToCurrency(item.balance) ?? 0 }}</h2>
         <p class="text-xs text-gray-500 uppercase">{{ item.label }}</p>
       </div>
     </div>
@@ -18,7 +18,7 @@ import IconExpense from '@/components/icons/IconExpense.vue'
 import IconSpentLeft from '@/components/icons/IconSpentLeft.vue'
 import { computed, markRaw, ref } from 'vue'
 import { currentMonth } from '@/utils/date'
-import { formatToPHP } from '@/utils/format'
+import { formatToCurrency } from '@/utils/format'
 import { getTransactions } from '@/data/transactions'
 
 const transExpense = getTransactions({ month: currentMonth, type: 'expense' })

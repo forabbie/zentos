@@ -18,7 +18,7 @@ const wallets = [
     currency: 'PHP',
     appearance: {
       color: 'green',
-      icon: 'bank',
+      icon: 'credit-card',
     },
   },
   {
@@ -28,7 +28,7 @@ const wallets = [
     balance: 20000,
     currency: 'PHP',
     appearance: {
-      color: 'yellow',
+      color: 'orange',
       icon: 'piggy-bank',
     },
   },
@@ -54,10 +54,10 @@ export const getWalletById = (id) => {
   return wallets.find((wallet) => wallet.id === id)
 }
 
-export const getWalletByName = (name) => {
-  return wallets.find((wallet) => wallet.name === name)
-}
+// export const getWalletByName = (name) => {
+//   return wallets.find((wallet) => wallet.name === name)
+// }
 
-export const getWalletByType = (type) => {
-  return wallets.filter((wallet) => wallet.type === type)
-}
+// export const getWalletByType = (type) => {
+//   return wallets.filter((wallet) => wallet.type === type)
+// }

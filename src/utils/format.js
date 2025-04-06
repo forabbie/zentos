@@ -1,4 +1,4 @@
-export function formatToPHP(number) {
+export function formatToCurrency(number) {
   const formatter = new Intl.NumberFormat('en-PH', {
     style: 'currency',
     currency: 'PHP',

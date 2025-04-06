@@ -29,7 +29,7 @@
         <div class="text-muted-color flex w-full font-medium capitalize">{{ item.head }}</div>
       </div>
       <div class="mt-2 flex items-center md:mt-0">
-        <span class="ml-4 font-medium">{{ formatToPHP(item.totalAmount) ?? 0 }}</span>
+        <span class="ml-4 font-medium">{{ formatToCurrency(item.totalAmount) ?? 0 }}</span>
       </div>
     </li>
   </ul>
@@ -38,7 +38,7 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import Chart from 'primevue/chart'
-import { formatToPHP } from '@/utils/format'
+import { formatToCurrency } from '@/utils/format'
 import { currentMonth } from '@/utils/date'
 import { getTransactions } from '@/data/transactions'
 
@@ -54,8 +54,9 @@ let expenses = null
 const transactions = getTransactions({ month: currentMonth, type: 'expense' })
 const total = computed(() => {
   return (
-    formatToPHP(transactions.response.reduce((sum, transaction) => sum + transaction.amount, 0)) ??
-    0
+    formatToCurrency(
+      transactions.response.reduce((sum, transaction) => sum + transaction.amount, 0),
+    ) ?? 0
   )
 })
 
