@@ -12,6 +12,7 @@ import { usePassThrough } from 'primevue/passthrough'
 
 import router from './router'
 import VueApexCharts from 'vue3-apexcharts'
+import ToastService from 'primevue/toastservice'
 
 const app = createApp(App)
 
@@ -28,6 +29,7 @@ app.use(PrimeVue, {
   pt: CustomPreset,
 })
 app.use(VueApexCharts)
+app.use(ToastService)
 app.use(router)
 
 app.mount('#app')

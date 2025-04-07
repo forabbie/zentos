@@ -3,11 +3,47 @@
   --p-button-padding-y: 0.375rem;
   /* --p-button-primary-background: var(--color-emerald-500);
   --p-button-primary-hover-background: var(--color-emerald-400); */
-  --p-button-primary-active-background: var();
+  /* --p-button-primary-active-background: var(); */
 }
 
 .p-button-label.custom-button-label,
 .p-button-icon.custom-button-icon {
-  font-size: 0.875rem;
+  font-size: 0.75rem;
   color: var(--color-black);
+}
+
+.p-button.custom- button.save {
+  @apply border-indigo-500 bg-indigo-500 hover:border-indigo-500 hover:bg-indigo-600 hover:outline-0;
+}
+
+.custom-button.save .p-button-label.custom-button-label,
+.custom-button.save .p-button-icon.custom-button-icon {
+  @apply text-black;
+}
+
+.p-button.custom-button.cancel {
+  @apply border-gray-500 bg-transparent hover:bg-gray-500;
+}
+
+.custom-button.cancel .p-button-label.custom-button-label,
+.custom-button.cancel .p-button-icon.custom-button-icon {
+  @apply text-gray-500;
+}
+
+.custom-button.cancel:hover .p-button-label.custom-button-label,
+.custom-button.cancel:hover .p-button-icon.custom-button-icon {
+  @apply text-white;
+}
+
+/* START: RADIO BUTTONS */
+.p-radiobutton.custom-radiobutton {
+  /* @apply bg-white; */
+}
+
+.p-radiobutton.custom-radiobutton .p-radiobutton-box {
+  @apply bg-white;
+}
+
+.p-radiobutton.custom-radiobutton.p-radiobutton-checked .p-radiobutton-icon {
+  @apply bg-teal-500;
 }

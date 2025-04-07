@@ -1,7 +1,6 @@
 <template>
   <div class="flex flex-col gap-4">
-    <div class="flex flex-col gap-4 rounded-xl bg-white pt-4 shadow-sm">
-      <h2 class="mx-4 text-xl font-bold">Wallets</h2>
+    <div class="rounded-xl bg-white shadow-sm">
       <TableList />
     </div>
   </div>

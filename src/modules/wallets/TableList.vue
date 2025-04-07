@@ -1,64 +1,56 @@
 <template>
+  <Toast />
+  <div class="m-4 flex items-center justify-between">
+    <h2 class="text-xl font-bold">Wallets</h2>
+    <div>
+      <Button
+        label="New"
+        icon="pi pi-plus"
+        @click="openNew"
+        pt:root="custom-button"
+        pt:label="custom-button-label"
+        pt:icon="custom-button-icon"
+        class="mr-2"
+      />
+      <Button
+        icon="pi pi-external-link"
+        label="Export"
+        @click="exportCSV($event)"
+        pt:root="custom-button"
+        pt:label="custom-button-label"
+        pt:icon="custom-button-icon"
+      />
+    </div>
+  </div>
   <div class="">
     <DataTable
-      v-model:editingRows="editingRows"
       :value="wallets"
-      editMode="row"
+      ref="dt"
       dataKey="id"
       pt:root="custom-dt"
       pt:header="custom-dt-header"
       pt:table="custom-dt-table"
-      @row-edit-save="onRowEditSave"
     >
-      <!-- <Column field="code" header="Code" style="width: 20%">
-        <template #editor="{ data, field }">
-          <InputText v-model="data[field]" fluid pt:root="custom-inputtext" />
-        </template>
-      </Column>
-      <Column field="name" header="Name" style="width: 20%">
-        <template #editor="{ data, field }">
-          <InputText v-model="data[field]" fluid pt:root="custom-inputtext" />
-        </template>
-      </Column>
-      <Column field="inventoryStatus" header="Status" style="width: 20%">
-        <template #editor="{ data, field }">
-          <Select
-            v-model="data[field]"
-            :options="statuses"
-            optionLabel="label"
-            optionValue="value"
-            placeholder="Select a Status"
-            fluid
-            pt:root="custom-select"
-            pt:label="custom-select-label"
-            pt:overlay="custom-select-overlay"
-            pt:option="custom-select-option"
+      <Column
+        :exportable="false"
+        field="apperance"
+        header="Display Icon"
+        :showFilterMenu="false"
+        style="width: 8rem"
+      >
+        <template #body="{ data }">
+          <div
+            :class="[
+              'flex size-12 shrink-0 items-center justify-center rounded-xl',
+              returnColor(data.appearance.color).bg,
+            ]"
           >
-            <template #option="slotProps">
-              <span class="text-xs">{{ slotProps.option.value }}</span>
-            </template>
-          </Select>
-        </template>
-        <template #body="slotProps">
-          <span>{{ slotProps.data.inventoryStatus }}</span>
+            <i :class="[returnColor(data.appearance.color).text]">
+              <component :is="returnIcon(data.appearance.icon)" />
+            </i>
+          </div>
         </template>
       </Column>
-      <Column field="price" header="Price" style="width: 20%">
-        <template #body="{ data, field }">
-          {{ formatToCurrency(data[field]) }}
-        </template>
-        <template #editor="{ data, field }">
-          <InputNumber
-            v-model="data[field]"
-            mode="currency"
-            currency="USD"
-            locale="en-US"
-            fluid
-            pt:root="custom-inputnumber"
-          />
-        </template>
-      </Column> -->
-
       <Column
         v-for="(field, index) in fields"
         :key="index"
@@ -69,36 +61,60 @@
         <template #body="{ data }">
           <span v-if="field.key === 'balance'"> {{ formatToCurrency(data[field.key]) }}</span>
           <div v-else class="capitalize">
-            <div v-if="field.key === 'name'" class="flex items-center justify-baseline">
-              <div
-                :class="[
-                  'mr-4 flex size-12 shrink-0 items-center justify-center rounded-xl',
-                  returnColor(data.appearance.color).bg,
-                ]"
-              >
-                <i :class="[returnColor(data.appearance.color).text]">
-                  <component :is="returnIcon(data.appearance.icon)" />
-                </i>
-              </div>
-              <span>{{ data[field.key] }}</span>
-            </div>
-            <span v-else>{{ data[field.key] }}</span>
+            <span>{{ data[field.key] }}</span>
           </div>
         </template>
-        <template #editor="{ data }">
-          <InputText
-            v-if="field.inputType === 'text'"
-            v-model="data[field.key]"
-            fluid
-            pt:root="custom-inputtext"
-          />
+      </Column>
+
+      <Column :exportable="false" bodyStyle="text-align:center;" style="width: 5rem">
+        <template #body="slotProps">
+          <div class="flex">
+            <Button
+              icon="pi pi-pencil"
+              rounded
+              @click="editProduct(slotProps.data)"
+              pt:root="p-datatable-row-editor-init p-button p-component p-button-icon-only p-button-secondary p-button-rounded p-button-text"
+            />
+            <Button
+              icon="pi pi-trash"
+              rounded
+              @click="confirmDeleteProduct(slotProps.data)"
+              pt:root="p-datatable-row-editor-cancel p-button p-component p-button-icon-only p-button-secondary p-button-rounded p-button-text"
+            />
+          </div>
+        </template>
+      </Column>
+      <template #empty>
+        <div v-if="walletStore.loading" class="text-center text-[11px] text-[#7086A4]">
+          No data found.
+        </div>
+      </template>
+    </DataTable>
+
+    <Dialog
+      v-model:visible="walletDialog"
+      :style="{ width: '450px' }"
+      header="Product Details"
+      :modal="true"
+      pt:root="!bg-white !text-black"
+    >
+      <div class="flex flex-col gap-6">
+        <!-- <img
+          v-if="product.image"
+          :src="`https://primefaces.org/cdn/primevue/images/product/${product.image}`"
+          :alt="product.image"
+          class="m-auto block pb-4"
+        /> -->
+        <div v-show="false">
+          <InputText v-model="wallet.appearance.color" fluid pt:root="custom-inputtext" />
+        </div>
+        <div v-show="false">
           <Select
-            v-if="field.inputType === 'select'"
-            v-model="data[field.key]"
-            :options="field.options"
+            v-model="wallet.appearance.icon"
+            :options="iconOptions"
             optionLabel="label"
             optionValue="value"
-            placeholder="Select a Type"
+            placeholder="Select a icons"
             fluid
             pt:root="custom-select"
             pt:label="custom-select-label"
@@ -109,53 +125,158 @@
               <span class="text-sm capitalize">{{ slotProps.option.value }}</span>
             </template>
           </Select>
-        </template>
-      </Column>
-      <Column
-        :rowEditor="true"
-        style="width: 10%; min-width: 8rem"
-        bodyStyle="text-align:center"
-      ></Column>
-      <template #empty>
-        <!-- <div v-if="!loading" class="text-center text-[11px] text-[#7086A4]">No data found.</div> -->
+        </div>
+
+        <div>
+          <label for="name" class="mb-3 block font-bold">Account Name</label>
+          <InputText v-model="wallet.name" fluid pt:root="custom-inputtext" />
+          <small v-if="submitted && !wallet.name" class="text-red-500">Name is required.</small>
+        </div>
+
+        <div>
+          <span class="mb-4 block font-bold">Account Type</span>
+          <div class="grid grid-cols-12 gap-4">
+            <div class="col-span-6 flex items-center gap-2">
+              <RadioButton
+                id="savings"
+                v-model="wallet.type"
+                name="type"
+                value="savings"
+                pt:root="custom-radiobutton"
+              />
+              <label for="savings">Savings</label>
+            </div>
+            <div class="col-span-6 flex items-center gap-2">
+              <RadioButton
+                id="spending"
+                v-model="wallet.type"
+                name="type"
+                value="spending"
+                pt:root="custom-radiobutton"
+              />
+              <label for="spending">Spending</label>
+            </div>
+          </div>
+          <small v-if="submitted && !wallet.type" class="text-red-500"
+            >Account Type is required.</small
+          >
+        </div>
+
+        <div>
+          <label for="balance" class="mb-3 block font-bold">Balance</label>
+          <InputNumber
+            id="balance"
+            v-model="wallet.balance"
+            mode="currency"
+            currency="PHP"
+            locale="en-PH"
+            fluid
+            pt:root="custom-inputnumber"
+          />
+          <small v-if="submitted && !wallet.balance" class="text-red-500"
+            >Balance is required.</small
+          >
+        </div>
+      </div>
+
+      <template #footer>
+        <Button
+          label="Cancel"
+          icon="pi pi-times"
+          text
+          @click="hideDialog"
+          pt:root="custom-button cancel"
+          pt:label="custom-button-label"
+          pt:icon="custom-button-icon"
+        />
+        <Button
+          label="Save"
+          icon="pi pi-check"
+          @click="saveWallet"
+          pt:root="custom-button save"
+          pt:label="custom-button-label"
+          pt:icon="custom-button-icon"
+        />
       </template>
-    </DataTable>
+    </Dialog>
+
+    <Dialog
+      v-model:visible="deleteWalletDialog"
+      :style="{ width: '450px' }"
+      header="Confirm"
+      :modal="true"
+      pt:root="!bg-white !text-black"
+    >
+      <div class="">
+        <span
+          >Are you sure you want to delete <b class="text-indigo-500">{{ wallet.name }}</b
+          >?</span
+        >
+      </div>
+      <template #footer>
+        <Button
+          label="No"
+          text
+          @click="deleteWalletDialog = false"
+          pt:root="custom-button cancel"
+          pt:label="custom-button-label"
+          pt:icon="custom-button-icon"
+        />
+        <Button
+          label="Yes"
+          @click="deleteWallet"
+          pt:root="custom-button save"
+          pt:label="custom-button-label"
+          pt:icon="custom-button-icon"
+        />
+      </template>
+    </Dialog>
   </div>
 </template>
 
 <script setup>
-import DataTable from 'primevue/datatable'
-import Column from 'primevue/column'
-
 import Tag from 'primevue/tag'
+import Button from 'primevue/button'
 import Select from 'primevue/select'
+import RadioButton from 'primevue/radiobutton'
 import InputText from 'primevue/inputtext'
 import InputNumber from 'primevue/inputnumber'
+import Toast from 'primevue/toast'
+import Toolbar from 'primevue/toolbar'
+import Dialog from 'primevue/dialog'
+import Column from 'primevue/column'
+import DataTable from 'primevue/datatable'
 
 import IconPiggyBank from '@/components/icons/IconPiggyBank.vue'
 import IconCreditCard from '@/components/icons/IconCreditCard.vue'
 import IconWallet from '@/components/icons/IconWallet.vue'
 
 import { ref, onMounted, markRaw } from 'vue'
-import { getWallets } from '@/data/wallet'
+import { useToast } from 'primevue/usetoast'
 
-const pt = {
-  table: { style: 'min-width: 50rem' },
-  column: {
-    bodycell: ({ state }) => ({
-      style: state['d_editing'] && 'padding-top: 0.75rem; padding-bottom: 0.75rem',
-    }),
+import { returnColor } from '@/utils/styles'
+import { formatToCurrency } from '@/utils/format'
+import { createId } from '@/utils/helper'
+
+import { useWalletStore } from '@/stores/wallets.store'
+
+const toast = useToast()
+const walletStore = useWalletStore()
+
+const wallet = ref({
+  appearance: {
+    icon: '',
+    color: '',
   },
-}
+})
+const wallets = ref(null)
+const submitted = ref(false)
 
-const wallets = ref()
 const fields = [
-  // { key: '#', label: ' #', inputType: 'text' },
-  // { key: 'appearance', label: 'Icon', inputType: 'image' },
-  { key: 'name', label: ' Name', inputType: 'text' },
+  { key: 'name', label: ' Account Name', inputType: 'text' },
   {
     key: 'type',
-    label: 'Type',
+    label: 'Account Type',
     inputType: 'select',
     options: [
       { label: 'Spending', value: 'spending' },
@@ -164,21 +285,110 @@ const fields = [
   },
   { key: 'balance', label: 'Balance', inputType: 'text' },
 ]
-const editingRows = ref([])
-const types = ref([
-  { label: 'savings', value: 'Savings' },
-  { label: 'Spending', value: 'Spending' },
-])
+
+const iconOptions = [
+  { label: 'Wallet', value: 'wallet' },
+  { label: 'Savings', value: 'credit-card' },
+  { label: 'Savings', value: 'piggy-bank' },
+]
 
 onMounted(() => {
-  wallets.value = getWallets().response
-  // ProductService.getProductsMini().then((data) => (products.value = data))
+  walletStore.getWallets().then((data) => {
+    wallets.value = data.response
+  })
 })
 
-const onRowEditSave = (event) => {
-  let { newData, index } = event
+const walletDialog = ref(false)
+const deleteWalletDialog = ref(false)
 
-  products.value[index] = newData
+const openNew = () => {
+  wallet.value = {
+    appearance: {
+      icon: '',
+      color: '',
+    },
+  }
+  submitted.value = false
+  walletDialog.value = true
+}
+
+const hideDialog = () => {
+  walletDialog.value = false
+  submitted.value = false
+}
+
+const saveWallet = () => {
+  submitted.value = true
+
+  if (wallet?.value.name?.trim()) {
+    if (wallet.value.id) {
+      wallet.value.appearance.icon =
+        wallet.value.type.toLowerCase() === 'savings' ? 'piggy-bank' : 'wallet'
+      wallet.value.appearance.color =
+        wallet.value.type.toLowerCase() === 'savings' ? 'green' : 'orange'
+      wallets.value[wallet.value.id - 1] = { ...wallet.value }
+
+      toast.add({
+        severity: 'success',
+        summary: 'Successful',
+        detail: 'Account Wallet Updated',
+        life: 3000,
+      })
+    } else {
+      wallet.value.id = createId(wallets.value.length)
+      wallet.value.appearance.icon =
+        wallet.value.type.toLowerCase() === 'savings' ? 'piggy-bank' : 'wallet'
+      wallet.value.appearance.color =
+        wallet.value.type.toLowerCase() === 'savings' ? 'green' : 'orange'
+      wallets.value.push(wallet.value)
+      toast.add({
+        severity: 'success',
+        summary: 'Successful',
+        detail: 'Account Wallet Created',
+        life: 3000,
+      })
+    }
+
+    walletDialog.value = false
+    wallet.value = {
+      appearance: {
+        icon: '',
+        color: '',
+      },
+    }
+  }
+}
+
+const editProduct = (data) => {
+  wallet.value = { ...data }
+  walletDialog.value = true
+}
+
+const confirmDeleteProduct = (data) => {
+  wallet.value = data
+  deleteWalletDialog.value = true
+}
+
+const deleteWallet = () => {
+  wallets.value = wallets.value.filter((val) => val.id !== wallet.value.id)
+  deleteWalletDialog.value = false
+  wallet.value = {
+    appearance: {
+      icon: '',
+      color: '',
+    },
+  }
+  toast.add({
+    severity: 'success',
+    summary: 'Successful',
+    detail: 'Account Wallet Deleted',
+    life: 3000,
+  })
+}
+
+const dt = ref(null)
+const exportCSV = () => {
+  dt.value.exportCSV()
 }
 
 const returnIcon = (icon) => {
@@ -186,52 +396,14 @@ const returnIcon = (icon) => {
     case 'wallet':
       return markRaw(IconWallet)
 
-    case 'credit-card':
-      return markRaw(IconCreditCard)
+    // case 'credit-card':
+    //   return markRaw(IconCreditCard)
 
     case 'piggy-bank':
       return markRaw(IconPiggyBank)
 
     default:
-      return markRaw(IconWallet)
+      return markRaw(IconCreditCard)
   }
-}
-
-const returnColor = (icon) => {
-  switch (icon) {
-    case 'blue':
-      return { text: 'text-blue-500', bg: 'bg-blue-50' }
-
-    case 'red':
-      return { text: 'text-red-500', bg: 'bg-red-50' }
-
-    case 'orange':
-      return { text: 'text-orange-500', bg: 'bg-orange-50' }
-
-    case 'green':
-      return { text: 'text-green-500', bg: 'bg-green-50' }
-
-    case 'blue':
-      return { text: 'text-blue-500', bg: 'bg-blue-50' }
-
-    case 'violet':
-      return { text: 'text-violet-500', bg: 'bg-violet-50' }
-
-    case 'purple':
-      return { text: 'text-purple-500', bg: 'bg-purple-50' }
-
-    case 'pink':
-      return { text: 'text-pink-500', bg: 'bg-pink-50' }
-
-    case 'rose':
-      return { text: 'text-rose-500', bg: 'bg-rose-50' }
-
-    default:
-      return { text: 'text-blue-500', bg: 'bg-blue-50' }
-  }
-}
-
-const formatToCurrency = (value) => {
-  return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value)
 }
 </script>
