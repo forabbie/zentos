@@ -10,7 +10,7 @@
 }
 
 .custom-select.p-select:not(.p-disabled).p-focus {
-  @apply shadow shadow-indigo-500 outline-2 outline-offset-0 outline-indigo-300;
+  @apply outline-2 outline-offset-0 outline-indigo-300;
 }
 
 .p-select.custom-select-label {
@@ -20,7 +20,7 @@
 .p-select-overlay.custom-select-overlay {
   --p-select-overlay-border-color: var(--color-gray-200);
   --p-select-overlay-background: var(--color-white);
-  /* --p-select-overlay-color: var(--color-black); */
+  --p-select-overlay-color: var(--color-black);
 }
 
 .p-select-option.custom-select-option {

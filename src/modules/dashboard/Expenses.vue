@@ -40,7 +40,7 @@ import { ref, onMounted, computed } from 'vue'
 import Chart from 'primevue/chart'
 import { formatToCurrency } from '@/utils/format'
 import { currentMonth } from '@/utils/date'
-import { getTransactions } from '@/data/transactions'
+import { getTransactions } from '@/data/transactions.data'
 
 onMounted(() => {
   chartData.value = setChartData()

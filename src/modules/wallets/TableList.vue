@@ -1,27 +1,5 @@
 <template>
   <Toast />
-  <div class="m-4 flex items-center justify-between">
-    <h2 class="text-xl font-bold">Wallets</h2>
-    <div>
-      <Button
-        label="New"
-        icon="pi pi-plus"
-        @click="openNew"
-        pt:root="custom-button"
-        pt:label="custom-button-label"
-        pt:icon="custom-button-icon"
-        class="mr-2"
-      />
-      <Button
-        icon="pi pi-external-link"
-        label="Export"
-        @click="exportCSV($event)"
-        pt:root="custom-button"
-        pt:label="custom-button-label"
-        pt:icon="custom-button-icon"
-      />
-    </div>
-  </div>
   <div class="">
     <DataTable
       :value="wallets"
@@ -31,6 +9,30 @@
       pt:header="custom-dt-header"
       pt:table="custom-dt-table"
     >
+      <template #header>
+        <div class="flex items-center justify-between">
+          <h2 class="card-title">Wallets</h2>
+          <div>
+            <Button
+              label="New"
+              icon="pi pi-plus"
+              @click="openNew"
+              pt:root="custom-button"
+              pt:label="custom-button-label"
+              pt:icon="custom-button-icon"
+              class="mr-2"
+            />
+            <Button
+              icon="pi pi-external-link"
+              label="Export"
+              @click="exportCSV($event)"
+              pt:root="custom-button"
+              pt:label="custom-button-label"
+              pt:icon="custom-button-icon"
+            />
+          </div>
+        </div>
+      </template>
       <Column
         :exportable="false"
         field="apperance"
@@ -72,13 +74,13 @@
             <Button
               icon="pi pi-pencil"
               rounded
-              @click="editProduct(slotProps.data)"
+              @click="editWallet(slotProps.data)"
               pt:root="p-datatable-row-editor-init p-button p-component p-button-icon-only p-button-secondary p-button-rounded p-button-text"
             />
             <Button
               icon="pi pi-trash"
               rounded
-              @click="confirmDeleteProduct(slotProps.data)"
+              @click="confirmDeleteTransaction(slotProps.data)"
               pt:root="p-datatable-row-editor-cancel p-button p-component p-button-icon-only p-button-secondary p-button-rounded p-button-text"
             />
           </div>
@@ -359,12 +361,12 @@ const saveWallet = () => {
   }
 }
 
-const editProduct = (data) => {
+const editWallet = (data) => {
   wallet.value = { ...data }
   walletDialog.value = true
 }
 
-const confirmDeleteProduct = (data) => {
+const confirmDeleteTransaction = (data) => {
   wallet.value = data
   deleteWalletDialog.value = true
 }

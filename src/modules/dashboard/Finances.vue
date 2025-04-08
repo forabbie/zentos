@@ -19,7 +19,7 @@ import IconSpentLeft from '@/components/icons/IconSpentLeft.vue'
 import { computed, markRaw, ref } from 'vue'
 import { currentMonth } from '@/utils/date'
 import { formatToCurrency } from '@/utils/format'
-import { getTransactions } from '@/data/transactions'
+import { getTransactions } from '@/data/transactions.data'
 
 const transExpense = getTransactions({ month: currentMonth, type: 'expense' })
 const transIncome = getTransactions({ month: currentMonth, type: 'income' })
