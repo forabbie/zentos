@@ -35,11 +35,11 @@
     <Column field="category" header="Category" :exportable="false" :showFilterMenu="false">
       <template #body="{ data }">
         <div class="flex w-full items-center gap-2">
-          <i :class="[returnColor(data.category.appearance.color).text]">
+          <i :class="[returnColor(data?.category?.appearance.color).text]">
             <IconSquareRounded />
           </i>
           <span class="text-muted-color flex w-full font-medium capitalize">{{
-            data.category.name
+            data?.category?.name
           }}</span>
         </div>
       </template>
@@ -52,9 +52,12 @@
       :showFilterMenu="false"
     >
       <template #body="{ data }">
-        <span v-if="field.key === 'date'"> {{ convertDateToWords(data[field.key]) }}</span>
-        <div v-else class="capitalize">
-          <span>{{ data[field.key] }}</span>
+        <div v-if="data && data.note">
+          <span v-if="field.key === 'amount'"> {{ formatToCurrency(data[field.key]) }}</span>
+          <span v-else-if="field.key === 'date'"> {{ convertDateToWords(data[field.key]) }}</span>
+          <div class="capitalize">
+            <span>{{ data[field.key] }}</span>
+          </div>
         </div>
       </template>
     </Column>
@@ -81,7 +84,7 @@
         No transaction found.
       </div>
     </template>
-    <!-- <template #footer>
+    <template #footer>
       <Paginator
         :rows="limit"
         :totalRecords="totalTransactions"
@@ -99,7 +102,7 @@
           <i class="pi pi-chevron-right text-xs"></i>
         </template>
       </Paginator>
-    </template> -->
+    </template>
   </DataTable>
 
   <Dialog
@@ -111,7 +114,7 @@
   >
     <div class="flex flex-col gap-6 pt-2">
       <div>
-        <label for="balance" class="mb-3 block font-bold">From Account: </label>
+        <span class="mb-3 block font-bold">From Account: </span>
         <Select
           v-model="transaction.account_id"
           :options="walletOptions"
@@ -138,23 +141,23 @@
         <div class="grid grid-cols-12 gap-4">
           <div class="col-span-6 flex items-center gap-2">
             <RadioButton
-              id="income"
+              inputId="tincome"
               v-model="transaction.type"
               name="type"
               value="income"
               pt:root="custom-radiobutton"
             />
-            <label for="income">Income</label>
+            <label for="tincome">Income</label>
           </div>
           <div class="col-span-6 flex items-center gap-2">
             <RadioButton
-              id="expense"
+              inputId="texpense"
               v-model="transaction.type"
               name="type"
               value="expense"
               pt:root="custom-radiobutton"
             />
-            <label for="expense">Expense</label>
+            <label for="texpense">Expense</label>
           </div>
         </div>
         <small v-if="submitted && !transaction.type" class="text-red-500"
@@ -163,8 +166,9 @@
       </div>
 
       <div>
-        <label for="balance" class="mb-3 block font-bold">Category</label>
+        <span class="mb-3 block font-bold">Category</span>
         <Select
+          id="tcategory"
           v-model="transaction.category_id"
           :options="categoryOptions"
           optionLabel="label"
@@ -186,10 +190,10 @@
       </div>
 
       <div>
-        <label for="balance" class="mb-3 block font-bold">Amount</label>
+        <label for="tamount" class="mb-3 block font-bold">Amount</label>
         <InputNumber
-          id="balance"
           v-model="transaction.amount"
+          inputId="tamount"
           mode="currency"
           currency="PHP"
           locale="en-PH"
@@ -202,14 +206,14 @@
       </div>
 
       <div>
-        <label for="balance" class="mb-3 block font-bold">Note</label>
-        <InputText id="note" v-model="transaction.note" fluid pt:root="custom-inputtext" />
+        <label for="tnote" class="mb-3 block font-bold">Note</label>
+        <InputText id="tnote" v-model="transaction.note" fluid pt:root="custom-inputtext" />
       </div>
 
       <div>
-        <label for="balance" class="mb-3 block font-bold">Date</label>
+        <label for="tdate" class="mb-3 block font-bold">Date</label>
         <DatePicker
-          id="date"
+          inputId="tdate"
           v-model="transaction.date"
           :manualInput="false"
           dateFormat="MM dd, yy"
@@ -296,6 +300,7 @@ import { ref, onMounted, markRaw } from 'vue'
 import { useToast } from 'primevue/usetoast'
 
 import { convertDateToWords } from '@/utils/date'
+import { formatToCurrency } from '@/utils/format'
 import { returnColor } from '@/utils/styles'
 import { createId } from '@/utils/helper'
 
@@ -310,12 +315,13 @@ const walletStore = useWalletStore()
 
 const fields = [
   { key: 'note', label: ' Details', inputType: 'text' },
+  { key: 'type', label: 'Type', inputType: 'text' },
   { key: 'amount', label: 'Amount', inputType: 'text' },
   { key: 'date', label: 'Date', inputType: 'date' },
 ]
 
-const dt = ref()
-const submitted = ref()
+const dt = ref(null)
+const submitted = ref(false)
 const transactions = ref([])
 const totalTransactions = ref(null)
 const limit = ref(10)
@@ -335,14 +341,12 @@ const mapToOptionsValue = (items) => {
 }
 
 onMounted(async () => {
-  await transactionStore.getTransactions().then((data) => {
-    totalTransactions.value = data.total
-    transactions.value = data.response
-  })
+  await getTransactions(limit.value, page.value)
 
   await categoryStore.getCategories().then((data) => {
     categories.value = data.response
   })
+
   await walletStore.getWallets().then((data) => {
     wallets.value = data.response
   })
@@ -350,6 +354,13 @@ onMounted(async () => {
   categoryOptions.value = mapToOptionsValue(categories.value)
   walletOptions.value = mapToOptionsValue(wallets.value)
 })
+
+const getTransactions = async (limit, page) => {
+  await transactionStore.getTransactions({ limit, page }).then((data) => {
+    totalTransactions.value = data.total
+    transactions.value = data.response
+  })
+}
 
 const transaction = ref({})
 const transactionDialog = ref(false)
@@ -370,10 +381,26 @@ const saveTransaction = () => {
   submitted.value = true
 
   if (transaction.value.category_id && transaction.value.account_id && transaction.value.amount) {
+    const storedTransactions = transactionStore.getTransactionsDataFromLocalStorage()
     if (transaction.value.id) {
       transactions.value[transaction.value.id - 1] = transactionStore.mapTransaction({
         ...transaction.value,
       })
+
+      storedTransactions[transaction.value.id - 1] = {
+        id: transaction.value.id,
+        type: transaction.value.type,
+        category_id: transaction.value.category_id,
+        account_id: transaction.value.account_id,
+        amount: transaction.value.amount,
+        note: transaction.value.note,
+        date: transaction.value.date,
+      }
+
+      transactionStore.saveTransactionsDataToLocalStorage(storedTransactions)
+
+      getTransactions(limit.value, page.value)
+
       toast.add({
         severity: 'success',
         summary: 'Successful',
@@ -381,8 +408,14 @@ const saveTransaction = () => {
         life: 3000,
       })
     } else {
-      transaction.value.id = createId(transactions.value.length)
+      transaction.value.id = createId(totalTransactions.value)
       transactions.value.push(transactionStore.mapTransaction(transaction.value))
+
+      storedTransactions.push({ ...transaction.value })
+      transactionStore.saveTransactionsDataToLocalStorage(storedTransactions)
+
+      getTransactions(limit.value, page.value)
+
       toast.add({
         severity: 'success',
         summary: 'Successful',
@@ -391,12 +424,15 @@ const saveTransaction = () => {
       })
     }
 
+    submitted.value = false
     transactionDialog.value = false
     transaction.value = {}
   }
 }
 
 const editTransaction = (data) => {
+  console.log(data)
+
   transaction.value = {
     id: data.id,
     type: data.type,
@@ -417,15 +453,23 @@ const confirmDeleteTransaction = (data) => {
 }
 
 const deleteTransaction = () => {
-  transactions.value = transactions.value.filter((val) => val.id !== transaction.value.id)
-  deleteTransactionDialog.value = false
-  transaction.value = {}
+  const storedTransactions = transactionStore.getTransactionsDataFromLocalStorage()
+  const updatedTransactions = storedTransactions.filter((t) => t.id !== transaction.value.id)
+
+  transactionStore.saveTransactionsDataToLocalStorage(updatedTransactions)
+  transactions.value = transactions.value.filter((t) => t.id !== transaction.value.id)
+
+  getTransactions(limit.value, page.value)
+
   toast.add({
     severity: 'success',
     summary: 'Successful',
     detail: 'Transaction Deleted',
     life: 3000,
   })
+
+  deleteTransactionDialog.value = false
+  transaction.value = {}
 }
 
 const exportCSV = () => {
@@ -435,6 +479,8 @@ const exportCSV = () => {
 const onPage = (event) => {
   page.value = event.page + 1
   limit.value = event.rows
+
+  getTransactions(limit.value, page.value)
 }
 
 const returnIcon = (icon) => {

@@ -7,7 +7,22 @@ import { useWalletStore } from '@/stores/wallets.store'
 
 export const useTransactionStore = defineStore('transaction', () => {
   const loading = ref(true)
-  const transactions = getTransactionsData()
+
+  const getTransactionsDataFromLocalStorage = () => {
+    const transactions = JSON.parse(localStorage.getItem('transactions')) || []
+    return transactions
+  }
+
+  const saveTransactionsDataToLocalStorage = (transactions) => {
+    localStorage.setItem('transactions', JSON.stringify(transactions))
+  }
+
+  const transactions = getTransactionsDataFromLocalStorage()
+
+  if (transactions.length === 0) {
+    saveTransactionsDataToLocalStorage(getTransactionsData())
+    transactions.push(...getTransactionsData())
+  }
 
   const categoryStore = useCategoryStore()
   const walletStore = useWalletStore()
@@ -29,8 +44,8 @@ export const useTransactionStore = defineStore('transaction', () => {
     }
   }
 
-  const getTransactions = ({ month, type, page, limit } = {}) => {
-    let filteredTransactions = transactions
+  const getTransactions = ({ month, type, page = 1, limit = 5 } = {}) => {
+    let filteredTransactions = getTransactionsDataFromLocalStorage()
 
     // Filter by month if provided
     if (month) {
@@ -45,31 +60,23 @@ export const useTransactionStore = defineStore('transaction', () => {
     }
 
     const total = filteredTransactions.length
-
-    // If page or limit are not specified, return all data
-    if (page && limit) {
-      const startIndex = (page - 1) * limit
-      const paginatedTransactions = filteredTransactions.slice(startIndex, startIndex + limit)
-      const mappedTransactions = paginatedTransactions.map(mapTransaction)
-
-      return Promise.resolve({
-        total,
-        page,
-        limit,
-        response: mappedTransactions,
-      })
-    }
-
-    // If no pagination parameters are provided, return all transactions
-    const mappedTransactions = filteredTransactions.map(mapTransaction)
+    const startIndex = (page - 1) * limit
+    const paginatedTransactions = filteredTransactions.slice(startIndex, startIndex + limit)
+    const mappedTransactions = paginatedTransactions.map(mapTransaction)
 
     return Promise.resolve({
       total,
-      page: 1, // Default page if not specified
-      limit: total, // Limit is the total length if no limit specified
+      page,
+      limit,
       response: mappedTransactions,
     })
   }
 
-  return { loading, getTransactions, mapTransaction }
+  return {
+    loading,
+    getTransactions,
+    mapTransaction,
+    getTransactionsDataFromLocalStorage,
+    saveTransactionsDataToLocalStorage,
+  }
 })
