@@ -3,6 +3,7 @@
   <DataTable
     ref="dt"
     :value="transactions"
+    :rows="5"
     pt:root="custom-dt"
     pt:header="custom-dt-header"
     pt:table="custom-dt-table"
@@ -31,26 +32,6 @@
         </div>
       </div>
     </template>
-    <!-- <Column
-      field="category"
-      header=""
-      :exportable="false"
-      :showFilterMenu="false"
-      style="width: 3rem"
-    >
-      <template #body="{ data }">
-        <div
-          :class="[
-            'flex size-10 shrink-0 items-center justify-center rounded-xl',
-            returnColor(data.category.appearance.color).bg,
-          ]"
-        >
-          <i :class="[returnColor(data.category.appearance.color).text]">
-            <component :is="returnIcon(data.type)" />
-          </i>
-        </div>
-      </template>
-    </Column> -->
     <Column field="category" header="Category" :exportable="false" :showFilterMenu="false">
       <template #body="{ data }">
         <div class="flex w-full items-center gap-2">
@@ -100,6 +81,25 @@
         No transaction found.
       </div>
     </template>
+    <!-- <template #footer>
+      <Paginator
+        :rows="limit"
+        :totalRecords="totalTransactions"
+        :currentPageReportTemplate="'{first} to {last} of {totalRecords}'"
+        :template="'PrevPageLink CurrentPageReport NextPageLink'"
+        @page="onPage"
+      >
+        <template #start>
+          <span class="text-xs text-white">Show</span>
+        </template>
+        <template #previcon>
+          <i class="pi pi-chevron-left text-xs"></i>
+        </template>
+        <template #nexticon>
+          <i class="pi pi-chevron-right text-xs"></i>
+        </template>
+      </Paginator>
+    </template> -->
   </DataTable>
 
   <Dialog
@@ -205,6 +205,18 @@
         <label for="balance" class="mb-3 block font-bold">Note</label>
         <InputText id="note" v-model="transaction.note" fluid pt:root="custom-inputtext" />
       </div>
+
+      <div>
+        <label for="balance" class="mb-3 block font-bold">Date</label>
+        <DatePicker
+          id="date"
+          v-model="transaction.date"
+          :manualInput="false"
+          dateFormat="MM dd, yy"
+          fluid
+          pt:root="custom-inputtext"
+        />
+      </div>
     </div>
 
     <template #footer>
@@ -271,7 +283,9 @@ import Toast from 'primevue/toast'
 import InputText from 'primevue/inputtext'
 import InputNumber from 'primevue/inputnumber'
 import Select from 'primevue/select'
+import DatePicker from 'primevue/datepicker'
 import RadioButton from 'primevue/radiobutton'
+import Paginator from 'primevue/paginator'
 
 import IconPiggyBank from '@/components/icons/IconPiggyBank.vue'
 import IconCreditCard from '@/components/icons/IconCreditCard.vue'
@@ -303,12 +317,15 @@ const fields = [
 const dt = ref()
 const submitted = ref()
 const transactions = ref([])
+const totalTransactions = ref(null)
+const limit = ref(10)
+const page = ref(1)
 
 const categories = ref([])
 const wallets = ref([])
 
-const categoryOptions = ref([{ label: 'Cash on Hand', value: 1 }])
-const walletOptions = ref([{ label: '', value: '' }])
+const categoryOptions = ref([{ label: '', value: 0 }])
+const walletOptions = ref([{ label: '', value: 0 }])
 
 const mapToOptionsValue = (items) => {
   return items.map((item) => ({
@@ -319,8 +336,10 @@ const mapToOptionsValue = (items) => {
 
 onMounted(async () => {
   await transactionStore.getTransactions().then((data) => {
+    totalTransactions.value = data.total
     transactions.value = data.response
   })
+
   await categoryStore.getCategories().then((data) => {
     categories.value = data.response
   })
@@ -349,15 +368,12 @@ const hideDialog = () => {
 
 const saveTransaction = () => {
   submitted.value = true
-  console.log(transaction.value)
-  console.log(transactions.value)
 
   if (transaction.value.category_id && transaction.value.account_id && transaction.value.amount) {
     if (transaction.value.id) {
       transactions.value[transaction.value.id - 1] = transactionStore.mapTransaction({
         ...transaction.value,
       })
-      console.log(transactions.value)
       toast.add({
         severity: 'success',
         summary: 'Successful',
@@ -381,8 +397,6 @@ const saveTransaction = () => {
 }
 
 const editTransaction = (data) => {
-  // console.log(data)
-  // transaction.value = { ...data }
   transaction.value = {
     id: data.id,
     type: data.type,
@@ -416,6 +430,11 @@ const deleteTransaction = () => {
 
 const exportCSV = () => {
   dt.value.exportCSV()
+}
+
+const onPage = (event) => {
+  page.value = event.page + 1
+  limit.value = event.rows
 }
 
 const returnIcon = (icon) => {
