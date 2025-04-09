@@ -5,11 +5,13 @@
         <div class="account-box">
           <div class="info">
             <div class="inv-title">
-              <h5>Savings</h5>
+              <h5>Total Balance</h5>
             </div>
             <div class="inv-balance-info">
               <p class="inv-balance">{{ formatToCurrency(savings) ?? 0 }}</p>
-              <span class="inv-stats balance-credited">+ 2453</span>
+              <span class="inv-stats balance-credited"
+                >{{ income >= 0 ? '+' : '-' }} {{ formatToCurrency(income) }}</span
+              >
             </div>
           </div>
           <div class="acc-action">
@@ -63,7 +65,7 @@ watch(selectedDate, async () => {
 
 onMounted(async () => {
   transIncome.value = await getTransactions({ month: selectedDate.value, type: 'income' })
-  savingsList.value = await getWallets({ type: 'savings' })
+  savingsList.value = await getWallets()
 })
 
 const getTransactions = async (month, type) => {
