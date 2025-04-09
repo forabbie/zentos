@@ -7,7 +7,7 @@
       <div class="flex h-full w-full flex-col gap-4">
         <AccountOverview />
         <div class="flex gap-4">
-          <Networth class="w-full" />
+          <Savings class="w-full" />
           <TotalBalance class="w-full" />
         </div>
         <div class="card">
@@ -29,7 +29,7 @@ import AccountOverview from '@/modules/dashboard/AccountOverview.vue'
 import ExpensesChart from '@/modules/dashboard/ExpensesChart.vue'
 import Transactions from '@/modules/dashboard/Transactions.vue'
 import TotalBalance from '@/modules/dashboard/TotalBalance.vue'
-import Networth from '@/modules/dashboard/Networth.vue'
+import Savings from '@/modules/dashboard/Savings.vue'
 import ActivityLog from '@/modules/dashboard/ActivityLog.vue'
 import VerticalBar from '@/components/charts/VerticalBar.vue'
 </script>
