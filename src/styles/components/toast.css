@@ -1,0 +1,9 @@
+.p-toast.custom-toast .p-toast-message {
+  backdrop-filter: unset;
+
+  @apply border-green-600 bg-green-100;
+}
+
+.p-toast.custom-toast .p-toast-detail {
+  @apply text-black;
+}

@@ -1,5 +1,5 @@
 <template>
-  <Toast />
+  <Toast pt:root="custom-toast" />
   <DataTable
     ref="dt"
     :value="transactions"

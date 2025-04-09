@@ -1,5 +1,5 @@
 <template>
-  <Toast />
+  <Toast pt:root="custom-toast" />
   <div class="">
     <DataTable
       :value="wallets"
