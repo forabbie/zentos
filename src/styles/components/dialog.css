@@ -1,0 +1,14 @@
+.p-dialog.custom-dialog {
+  @apply bg-white text-black;
+}
+
+.custom-dialog .custom-dialog-header {
+  @apply p-4;
+}
+.custom-dialog .custom-dialog-content {
+  @apply px-4;
+}
+
+.custom-dialog .custom-dialog-footer {
+  @apply px-4;
+}

@@ -33,7 +33,7 @@
 }
 
 .p-datatable-table.custom-dt-table > .p-datatable-tbody tr td {
-  @apply border-gray-200;
+  @apply border-gray-200 py-1;
 }
 
 .p-datatable-table.custom-dt-table > .p-datatable-tbody tr td .p-button {

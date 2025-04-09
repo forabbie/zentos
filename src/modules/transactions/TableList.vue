@@ -38,9 +38,7 @@
           <i :class="[returnColor(data?.category?.appearance.color).text]">
             <IconSquareRounded />
           </i>
-          <span class="text-muted-color flex w-full font-medium capitalize">{{
-            data?.category?.name
-          }}</span>
+          <span class="flex w-full text-sm font-medium capitalize">{{ data?.category?.name }}</span>
         </div>
       </template>
     </Column>
@@ -52,10 +50,10 @@
       :showFilterMenu="false"
     >
       <template #body="{ data }">
-        <div v-if="data && data.note">
+        <div v-if="data && data.note" class="text-sm capitalize">
           <span v-if="field.key === 'amount'"> {{ formatToCurrency(data[field.key]) }}</span>
           <span v-else-if="field.key === 'date'"> {{ convertDateToWords(data[field.key]) }}</span>
-          <div class="capitalize">
+          <div v-else>
             <span>{{ data[field.key] }}</span>
           </div>
         </div>
@@ -110,9 +108,12 @@
     :style="{ width: '450px' }"
     header="Transaction Details"
     :modal="true"
-    pt:root="!bg-white !text-black"
+    pt:root="custom-dialog"
+    pt:header="custom-dialog-header"
+    pt:content="custom-dialog-content"
+    pt:footer="custom-dialog-footer"
   >
-    <div class="flex flex-col gap-6 pt-2">
+    <div class="flex flex-col gap-6 pt-2 text-sm">
       <div>
         <span class="mb-3 block font-bold">From Account: </span>
         <Select
@@ -147,7 +148,7 @@
               value="income"
               pt:root="custom-radiobutton"
             />
-            <label for="tincome">Income</label>
+            <label for="tincome" class="text-sm">Income</label>
           </div>
           <div class="col-span-6 flex items-center gap-2">
             <RadioButton
@@ -157,7 +158,7 @@
               value="expense"
               pt:root="custom-radiobutton"
             />
-            <label for="texpense">Expense</label>
+            <label for="texpense" class="text-sm">Expense</label>
           </div>
         </div>
         <small v-if="submitted && !transaction.type" class="text-red-500"
@@ -189,37 +190,44 @@
         >
       </div>
 
-      <div>
-        <label for="tamount" class="mb-3 block font-bold">Amount</label>
-        <InputNumber
-          v-model="transaction.amount"
-          inputId="tamount"
-          mode="currency"
-          currency="PHP"
-          locale="en-PH"
-          fluid
-          pt:root="custom-inputnumber"
-        />
-        <small v-if="submitted && !transaction.amount" class="text-red-500"
-          >Amount is required.</small
-        >
+      <div class="grid grid-cols-12 gap-4">
+        <div class="col-span-6">
+          <label for="tamount" class="mb-3 block font-bold">Amount</label>
+          <InputNumber
+            v-model="transaction.amount"
+            inputId="tamount"
+            mode="currency"
+            currency="PHP"
+            locale="en-PH"
+            fluid
+            pt:root="custom-inputnumber"
+          />
+          <small v-if="submitted && !transaction.amount" class="text-red-500"
+            >Amount is required.</small
+          >
+        </div>
+        <div class="col-span-6">
+          <label for="tdate" class="mb-3 block font-bold">Date</label>
+          <DatePicker
+            inputId="tdate"
+            v-model="transaction.date"
+            :manualInput="false"
+            dateFormat="MM dd, yy"
+            fluid
+            pt:root="custom-datepicker form"
+            pt:pcInputText:root="custom-inputtext"
+            pt:panel="custom-datepicker-panel"
+            pt:header="custom-datepicker-header"
+            pt:title="custom-datepicker-title"
+            pt:weekday="custom-datepicker-weekday"
+            pt:day="custom-datepicker-day"
+          />
+        </div>
       </div>
 
       <div>
         <label for="tnote" class="mb-3 block font-bold">Note</label>
         <InputText id="tnote" v-model="transaction.note" fluid pt:root="custom-inputtext" />
-      </div>
-
-      <div>
-        <label for="tdate" class="mb-3 block font-bold">Date</label>
-        <DatePicker
-          inputId="tdate"
-          v-model="transaction.date"
-          :manualInput="false"
-          dateFormat="MM dd, yy"
-          fluid
-          pt:root="custom-inputtext"
-        />
       </div>
     </div>
 
@@ -249,7 +257,10 @@
     :style="{ width: '450px' }"
     header="Confirm"
     :modal="true"
-    pt:root="!bg-white !text-black"
+    pt:root="custom-dialog"
+    pt:header="custom-dialog-header"
+    pt:content="custom-dialog-content"
+    pt:footer="custom-dialog-footer"
   >
     <div class="">
       <span

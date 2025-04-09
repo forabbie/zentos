@@ -3,7 +3,7 @@
 @import './variables.css';
 @import './base.css';
 
-@import './components/tables.css';
+@import './components/dialog.css';
 @import './components/buttons.css';
-@import './components/form-input.css';
-@import './components/form-select.css';
+@import './components/forms.css';
+@import './components/tables.css';

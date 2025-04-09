@@ -43,7 +43,7 @@
         <template #body="{ data }">
           <div
             :class="[
-              'flex size-12 shrink-0 items-center justify-center rounded-xl',
+              'flex size-10 shrink-0 items-center justify-center rounded-xl',
               returnColor(data.appearance.color).bg,
             ]"
           >

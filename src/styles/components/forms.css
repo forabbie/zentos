@@ -1,0 +1,84 @@
+/* INPUT FIELDS */
+.p-inputtext.custom-inputtext,
+.p-inputnumber.custom-inputnumber > .p-inputtext {
+  font-size: 0.875rem;
+  padding: 0.375rem 1rem;
+  --p-inputtext-background: var(--color-white);
+  --p-inputtext-color: var(--color-black);
+  --p-inputtext-border-color: var(--color-gray-200);
+  --p-inputtext-hover-border-color: var(--color-gray-200);
+  --p-inputtext-focus-border-color: var(--color-indigo-200);
+  /* --p-inputtext-focus-ring-color: var(--color-red-800);
+  --p-inputtext-focus-ring-offset: var(--color-red-800);
+  --p-inputtext-focus-ring-shadow: var(--color-red-800); */
+}
+
+.p-inputtext.custom-inputtext,
+.p-inputnumber.custom-inputnumber > .p-inputtext {
+  @apply enabled:focus:shadow enabled:focus:shadow-indigo-500 enabled:focus:outline-2 enabled:focus:outline-offset-0 enabled:focus:outline-indigo-300;
+}
+
+.p-inputnumber.custom-inputnumber > .p-inputtext {
+  /* --p-inputtext-background: var(--color-red-200); */
+}
+
+.p-datepicker-panel.custom-datepicker-panel {
+  @apply border-gray-300 bg-white;
+}
+
+.p-datepicker-header.custom-datepicker-header {
+  @apply bg-white text-sm;
+}
+
+.p-datepicker-title.custom-datepicker-title button,
+.p-datepicker-weekday.custom-datepicker-weekday,
+.p-datepicker-day.custom-datepicker-day {
+  @apply text-sm text-black;
+}
+
+.p-datepicker-header.custom-datepicker-header button,
+.p-datepicker-weekday.custom-datepicker-weekday,
+.p-datepicker-day.custom-datepicker-day {
+  @apply size-8;
+}
+
+/* .p-datepicker-day.custom-datepicker-day {
+  @apply text-sm text-black;
+} */
+
+/* FORM SELECT */
+.p-select.custom-select {
+  --p-select-background: var(--color-white);
+  --p-select-color: var(--color-black);
+  --p-select-border-color: var(--color-gray-200);
+  --p-select-hover-border-color: var(--color-gray-200);
+  --p-select-focus-border-color: var(--color-gray-200);
+  /* --p-select-focus-ring-color: var(--color-red-800);
+  --p-select-focus-ring-offset: var(--color-red-800);
+  --p-select-focus-ring-shadow: var(--color-red-800); */
+}
+
+.custom-select.p-select:not(.p-disabled).p-focus {
+  @apply outline-2 outline-offset-0 outline-indigo-300;
+}
+
+.p-select-label.custom-select-label {
+  @apply text-sm text-black;
+}
+
+.p-select-overlay.custom-select-overlay {
+  --p-select-overlay-border-color: var(--color-gray-200);
+  --p-select-overlay-background: var(--color-white);
+  --p-select-overlay-color: var(--color-black);
+}
+
+.p-select-option.custom-select-option {
+  --p-select-option-focus-background: var(--color-transparent);
+  --p-select-option-selected-background: var(--color-gray-100);
+  --p-select-option-selected-focus-background: var(--color-gray-100);
+
+  --p-select-option-color: var(--color-black);
+  --p-select-option-focus-color: var(--color-indigo-500);
+  --p-select-option-selected-color: var(--color-indigo-500);
+  --p-select-option-selected-focus-color: var(--color-indigo-500);
+}
