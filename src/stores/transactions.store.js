@@ -44,7 +44,7 @@ export const useTransactionStore = defineStore('transaction', () => {
     }
   }
 
-  const getTransactions = ({ month, type, page = 1, limit = 5 } = {}) => {
+  const getTransactions = ({ month, type, page = 1, limit } = {}) => {
     let filteredTransactions = getTransactionsDataFromLocalStorage()
 
     // Filter by month if provided
@@ -56,20 +56,35 @@ export const useTransactionStore = defineStore('transaction', () => {
 
     // Filter by type if provided
     if (type) {
-      filteredTransactions = filteredTransactions.filter((transaction) => transaction.type === type)
+      filteredTransactions = filteredTransactions.filter(
+        (transaction) => transaction.type.toLowerCase() === type.toLowerCase(),
+      )
     }
 
     const total = filteredTransactions.length
-    const startIndex = (page - 1) * limit
-    const paginatedTransactions = filteredTransactions.slice(startIndex, startIndex + limit)
+
+    // If limit is not specified, display all data (set limit to total length)
+    const effectiveLimit = limit !== undefined ? limit : total
+
+    const startIndex = (page - 1) * effectiveLimit
+    const paginatedTransactions = filteredTransactions.slice(
+      startIndex,
+      startIndex + effectiveLimit,
+    )
     const mappedTransactions = paginatedTransactions.map(mapTransaction)
 
-    return Promise.resolve({
+    const result = {
       total,
       page,
-      limit,
       response: mappedTransactions,
-    })
+    }
+
+    // Include 'limit' only if it's specified
+    if (limit !== undefined) {
+      result.limit = limit
+    }
+
+    return Promise.resolve(result)
   }
 
   return {

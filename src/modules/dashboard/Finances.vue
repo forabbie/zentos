@@ -16,25 +16,40 @@
 import IconIncome from '@/components/icons/IconIncome.vue'
 import IconExpense from '@/components/icons/IconExpense.vue'
 import IconSpentLeft from '@/components/icons/IconSpentLeft.vue'
-import { computed, markRaw, ref } from 'vue'
+import { computed, markRaw, ref, onMounted } from 'vue'
 import { currentMonth } from '@/utils/date'
 import { formatToCurrency } from '@/utils/format'
-import { getTransactions } from '@/data/transactions.data'
 
-const transExpense = getTransactions({ month: currentMonth, type: 'expense' })
-const transIncome = getTransactions({ month: currentMonth, type: 'income' })
+import { useTransactionStore } from '@/stores/transactions.store'
+
+const transactionStore = useTransactionStore()
+
+const transExpense = ref(null)
+const transIncome = ref(null)
+
+onMounted(async () => {
+  transExpense.value = await getTransactions({ month: currentMonth, type: 'expense' })
+  transIncome.value = await getTransactions({ month: currentMonth, type: 'income' })
+})
+
+const getTransactions = async (month, type) => {
+  const data = await transactionStore.getTransactions(month, type)
+  return data.response
+}
 
 const expence = computed(() => {
-  return transExpense.response.reduce((sum, transaction) => sum + transaction.amount, 0) ?? 0
+  return transExpense.value?.reduce((sum, t) => sum + t.amount, 0) ?? 0
 })
 
 const income = computed(() => {
-  return transIncome.response.reduce((sum, transaction) => sum + transaction.amount, 0) ?? 0
+  return transIncome.value?.reduce((sum, t) => sum + t.amount, 0) ?? 0
 })
 
-const left = ref(income.value - expence.value)
+const left = computed(() => {
+  return income.value - expence.value
+})
 
-const items = [
+const items = computed(() => [
   {
     label: 'income',
     icon: markRaw(IconIncome),
@@ -53,5 +68,5 @@ const items = [
     balance: left.value,
     bg: 'bg-green-100/50',
   },
-]
+])
 </script>

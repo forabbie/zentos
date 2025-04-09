@@ -10,7 +10,7 @@
         class="absolute z-10 mb-8 w-full px-8"
       />
       <div class="absolute top-0 right-0 bottom-0 left-0 flex flex-col items-center justify-center">
-        <h3 class="text-2xl font-bold text-gray-800">{{ total }}</h3>
+        <h3 class="text-2xl font-bold text-gray-800">{{ totalExpense }}</h3>
         <p>Total Expense</p>
       </div>
     </div>
@@ -36,29 +36,35 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue'
 import Chart from 'primevue/chart'
+
+import { ref, onMounted, computed } from 'vue'
+
 import { formatToCurrency } from '@/utils/format'
 import { currentMonth } from '@/utils/date'
-import { getTransactions } from '@/data/transactions.data'
 
-onMounted(() => {
+import { useTransactionStore } from '@/stores/transactions.store'
+
+const transactionStore = useTransactionStore()
+
+const transactions = ref(null)
+
+onMounted(async () => {
+  await getTransactions({ month: currentMonth, type: 'expense' })
   chartData.value = setChartData()
   chartOptions.value = setChartOptions()
 })
 
-const chartRef = ref(null)
-const chartData = ref()
-const chartOptions = ref(null)
-let expenses = null
-const transactions = getTransactions({ month: currentMonth, type: 'expense' })
-const total = computed(() => {
-  return (
-    formatToCurrency(
-      transactions.response.reduce((sum, transaction) => sum + transaction.amount, 0),
-    ) ?? 0
-  )
+const getTransactions = async (month, type) => {
+  const data = await transactionStore.getTransactions(month, type)
+  transactions.value = data.response
+}
+
+const totalExpense = computed(() => {
+  return formatToCurrency(transactions.value?.reduce((sum, t) => sum + t.amount, 0)) ?? 0
 })
+
+let expenses = null
 
 const calculateCategoryHeadTotals = (transactions) => {
   // Step 1: Group transactions by category head
@@ -125,9 +131,13 @@ const calculateCategoryHeadTotals = (transactions) => {
   return headTotals
 }
 
+const chartRef = ref(null)
+const chartData = ref(null)
+const chartOptions = ref(null)
+
 const setChartData = () => {
   const documentStyle = getComputedStyle(document.body)
-  expenses = calculateCategoryHeadTotals(transactions.response)
+  expenses = calculateCategoryHeadTotals(transactions.value)
 
   const labels = expenses.map((item) => item.head)
   const data = expenses.map((item) => item.totalAmount)
