@@ -15,13 +15,13 @@
           <VerticalBar />
         </div>
       </div>
-      <div class="w-2/5">
+      <div class="flex w-2/5 flex-col gap-4">
+        <Expenses />
         <ActivityLog />
       </div>
     </div>
   </div>
 </template>
-<!-- <Expenses v-if="false" /> -->
 
 <script setup>
 import Greetings from '@/modules/dashboard/Greetings.vue'

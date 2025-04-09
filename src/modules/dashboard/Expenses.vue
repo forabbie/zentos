@@ -1,70 +1,109 @@
 <template>
-  <div class="flex flex-col justify-center">
+  <div class="card flex h-full min-h-101 flex-col justify-start">
     <h2 class="card-title">Expenses</h2>
-    <div class="relative">
-      <Chart
-        ref="chartRef"
-        type="doughnut"
-        :data="chartData"
-        :options="chartOptions"
-        class="absolute z-10 mb-8 w-full px-8"
-      />
-      <div class="absolute top-0 right-0 bottom-0 left-0 flex flex-col items-center justify-center">
-        <h3 class="text-2xl font-bold text-gray-800">{{ totalExpense }}</h3>
-        <p>Total Expense</p>
-      </div>
+    <div v-if="transactions.length <= 0" class="flex h-full items-center justify-center">
+      <div class="mb-10 text-center text-base text-[#7086A4]">No data found.</div>
     </div>
+    <apexchart
+      v-else
+      type="donut"
+      height="360"
+      :options="expensesDonutOptions"
+      :series="expensesDonutSeries"
+    ></apexchart>
   </div>
-  <ul class="list-none overflow-scroll p-0">
-    <li
-      class="mb-6 flex flex-col border-b border-gray-200 pb-1 md:flex-row md:items-center md:justify-between"
-      v-for="item in expenses"
-      :key="item.id"
-    >
-      <div class="flex w-full items-center gap-2">
-        <span
-          class="size-4 rounded-sm bg-gray-500 md:mb-0"
-          :style="{ backgroundColor: item.color }"
-        ></span>
-        <div class="text-muted-color flex w-full font-medium capitalize">{{ item.head }}</div>
-      </div>
-      <div class="mt-2 flex items-center md:mt-0">
-        <span class="ml-4 font-medium">{{ formatToCurrency(item.totalAmount) ?? 0 }}</span>
-      </div>
-    </li>
-  </ul>
 </template>
 
 <script setup>
-import Chart from 'primevue/chart'
-
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 
 import { formatToCurrency } from '@/utils/format'
-import { currentMonth } from '@/utils/date'
 
+import { useGlobalStore } from '@/stores/global.store'
 import { useTransactionStore } from '@/stores/transactions.store'
 
+const globalStore = useGlobalStore()
 const transactionStore = useTransactionStore()
 
-const transactions = ref(null)
+const expensesDonutSeries = ref([])
+const expensesDonutOptions = ref({})
 
-onMounted(async () => {
-  await getTransactions({ month: currentMonth, type: 'expense' })
-  chartData.value = setChartData()
-  chartOptions.value = setChartOptions()
+const transactions = ref([])
+const selectedDate = computed(() => globalStore.selectedDate)
+
+watch(selectedDate, async () => {
+  await getTransactions({ month: selectedDate.value, type: 'expense' })
+  plotChartData()
+  plotChartOptions()
 })
 
-const getTransactions = async (month, type) => {
-  const data = await transactionStore.getTransactions(month, type)
+onMounted(async () => {
+  await getTransactions({ month: selectedDate.value, type: 'expense' })
+  plotChartData()
+  plotChartOptions()
+})
+
+const getTransactions = async (month) => {
+  const data = await transactionStore.getTransactions(month)
   transactions.value = data.response
 }
 
-const totalExpense = computed(() => {
-  return formatToCurrency(transactions.value?.reduce((sum, t) => sum + t.amount, 0)) ?? 0
-})
+const plotChartData = () => {
+  expensesDonutSeries.value = setChartData().data
+}
 
-let expenses = null
+const plotChartOptions = () => {
+  let option = {
+    chart: {},
+    dataLabels: { enabled: false },
+    expandOnClick: false,
+    stroke: { show: true, width: 15, colors: '#fff' },
+    legend: {
+      show: true,
+      position: 'bottom',
+      horizontalAlign: 'center',
+      fontSize: '14px',
+      markers: { width: 10, height: 10 },
+      height: 50,
+      offsetY: -20,
+      itemMargin: { horizontal: 8, vertical: 0 },
+    },
+    plotOptions: {
+      pie: {
+        donut: {
+          size: '65%',
+          background: 'transparent',
+          labels: {
+            show: true,
+            name: { show: true, fontSize: '29px', fontFamily: 'Nunito, sans-serif', offsetY: -20 },
+            value: {
+              show: true,
+              fontSize: '26px',
+              fontFamily: 'Nunito, sans-serif',
+              color: '#000',
+              offsetY: 0,
+              formatter: function (val) {
+                return formatToCurrency(val)
+              },
+            },
+            total: {
+              show: true,
+              label: 'Total',
+              color: '#888ea8',
+              fontSize: '19px',
+              formatter: function (w) {
+                const total = w.globals.seriesTotals.reduce((a, b) => a + b, 0)
+                return formatToCurrency(total)
+              },
+            },
+          },
+        },
+      },
+    },
+    labels: setChartData().labels,
+  }
+  expensesDonutOptions.value = option
+}
 
 const calculateCategoryHeadTotals = (transactions) => {
   // Step 1: Group transactions by category head
@@ -89,8 +128,10 @@ const calculateCategoryHeadTotals = (transactions) => {
     )
 
     // Build object for each head with the categories within it
+    const capitalizedWord = head.charAt(0).toUpperCase() + head.slice(1)
+
     const totalHead = {
-      head,
+      head: capitalizedWord, // Capitalize the head label
       totalAmount: totalAmountForHead,
       categories: [],
       color: '',
@@ -131,52 +172,15 @@ const calculateCategoryHeadTotals = (transactions) => {
   return headTotals
 }
 
-const chartRef = ref(null)
-const chartData = ref(null)
-const chartOptions = ref(null)
-
 const setChartData = () => {
-  const documentStyle = getComputedStyle(document.body)
-  expenses = calculateCategoryHeadTotals(transactions.value)
+  let expenses = calculateCategoryHeadTotals(transactions.value)
 
   const labels = expenses.map((item) => item.head)
   const data = expenses.map((item) => item.totalAmount)
 
-  const backgroundColor =
-    expenses.map((item) => item.color) ?? documentStyle.getPropertyValue('--p-gray-500')
-
-  const hoverBackgroundColor =
-    expenses.map((item) => item.color) ?? documentStyle.getPropertyValue('--p-gray-400')
-
   return {
     labels: labels,
-    datasets: [
-      {
-        data: data,
-        backgroundColor: backgroundColor,
-        hoverBackgroundColor: hoverBackgroundColor,
-      },
-    ],
-  }
-}
-
-const setChartOptions = () => {
-  const documentStyle = getComputedStyle(document.documentElement)
-  const textColor = documentStyle.getPropertyValue('--p-text-black')
-
-  return {
-    plugins: {
-      legend: false,
-      // legend: {
-      //   labels: {
-      //     point: 'circle',
-      //     usePointStyle: true,
-      //     color: textColor,
-      //   },
-      // },
-    },
-    cutout: '70%',
-    spacing: 5,
+    data: data,
   }
 }
 </script>
