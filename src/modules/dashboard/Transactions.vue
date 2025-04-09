@@ -2,64 +2,157 @@
   <div>
     <div class="mb-6 flex items-center justify-between">
       <h2 class="card-title">Transactions</h2>
-      <div>
-        <Button
-          icon="pi pi-ellipsis-v"
-          class="p-button-text p-button-plain p-button-rounded"
-          @click="$refs.menu.toggle($event)"
-        ></Button>
-        <Menu ref="menu" popup :model="items" class="!min-w-40"></Menu>
-      </div>
+      <RouterLink to="/transactions" class="flex items-center gap-2 text-sm hover:text-indigo-500">
+        View All
+        <i class="pi pi-arrow-circle-right"></i>
+      </RouterLink>
     </div>
-    <div class="h-32 overflow-y-auto">
-      <span class="mb-4 block font-medium text-gray-500">TODAY</span>
-      <ul class="mx-0 mt-0 mb-6 list-none p-0">
-        <li class="border-surface flex items-center py-2">
-          <div
-            class="mr-4 flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-100 dark:bg-blue-400/10"
-          >
-            <i class="pi pi-dollar !text-xl text-blue-500"></i>
-          </div>
-          <span class="flex w-full items-center justify-between">
-            <div class="">
-              <h3 class="text-lg leading-5 font-bold">dasd</h3>
-              <p class="leading-5 text-slate-500">asdap</p>
-            </div>
-            <span class="text-xl font-bold">$79.00</span>
-          </span>
-        </li>
-      </ul>
-    </div>
-    <div class="flex items-center justify-center">
-      <button type="button" class="flex gap-2">
-        <span>View All</span>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          class="feather feather-arrow-right"
-        >
-          <line x1="5" y1="12" x2="19" y2="12"></line>
-          <polyline points="12 5 19 12 12 19"></polyline>
-        </svg>
-      </button>
-    </div>
+    <apexchart
+      height="350"
+      type="bar"
+      :options="transactionOption"
+      :series="transactionSeries"
+    ></apexchart>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 
-const menu = ref(null)
+import { useTransactionStore } from '@/stores/transactions.store'
+import { useGlobalStore } from '@/stores/global.store'
 
-const items = ref([
-  { label: 'Add New', icon: 'pi pi-fw pi-plus' },
-  { label: 'Remove', icon: 'pi pi-fw pi-trash' },
-])
+const globalStore = useGlobalStore()
+const transactionStore = useTransactionStore()
+
+const transExpense = ref(null)
+const transIncome = ref(null)
+
+const selectedDate = computed(() => globalStore.selectedDate)
+
+watch(selectedDate, async () => {
+  transExpense.value = await getTransactions({ month: selectedDate.value, type: 'expense' })
+  transIncome.value = await getTransactions({ month: selectedDate.value, type: 'income' })
+  plotTransactionData()
+})
+
+onMounted(async () => {
+  transExpense.value = await getTransactions({ month: selectedDate.value, type: 'expense' })
+  transIncome.value = await getTransactions({ month: selectedDate.value, type: 'income' })
+  plotTransactionData()
+})
+
+const getTransactions = async (month, type) => {
+  const data = await transactionStore.getTransactions(month, type)
+  return data.response
+}
+
+const transactionSeries = ref([])
+const allDaysInMonth = ref([])
+const categories = ref([])
+
+const plotTransactionData = () => {
+  const dailyIncomeMap = {}
+  const dailyExpenseMap = {}
+
+  // Process income transactions
+  transIncome.value.forEach((transaction) => {
+    const transactionDate = new Date(transaction.date)
+    const dateKey = transactionDate.toISOString().split('T')[0]
+
+    if (!dailyIncomeMap[dateKey]) {
+      dailyIncomeMap[dateKey] = 0
+    }
+    dailyIncomeMap[dateKey] += transaction.amount
+  })
+
+  // Process expense transactions
+  transExpense.value.forEach((transaction) => {
+    const date = new Date(transaction.date)
+    const dateKey = date.toISOString().split('T')[0]
+
+    if (!dailyExpenseMap[dateKey]) {
+      dailyExpenseMap[dateKey] = 0
+    }
+    dailyExpenseMap[dateKey] += transaction.amount
+  })
+
+  const monthStart = new Date(selectedDate.value)
+  const monthEnd = new Date(monthStart.getFullYear(), monthStart.getMonth() + 1, 0)
+
+  for (let day = 1; day <= monthEnd.getDate(); day++) {
+    const dayString = `${monthStart.getFullYear()}-${String(monthStart.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
+    const label = `${String(day).padStart(2, '0')}`
+    allDaysInMonth.value.push(dayString)
+    categories.value.push(label)
+  }
+
+  const incomeData = allDaysInMonth.value.map((day) => dailyIncomeMap[day] || 0)
+  const expenseData = allDaysInMonth.value.map((day) => dailyExpenseMap[day] || 0)
+
+  // Remove the empty data points (where both income and expense are zero)
+  const filteredIncomeData = []
+  const filteredExpenseData = []
+  const filteredCategories = []
+
+  allDaysInMonth.value.forEach((day, index) => {
+    if (incomeData[index] !== 0 || expenseData[index] !== 0) {
+      filteredIncomeData.push(incomeData[index])
+      filteredExpenseData.push(expenseData[index])
+      filteredCategories.push(categories.value[index])
+    }
+  })
+
+  transactionSeries.value = [
+    { name: 'Income', data: filteredIncomeData },
+    { name: 'Expense', data: filteredExpenseData },
+  ]
+  categories.value = filteredCategories
+}
+
+const transactionOption = computed(() => {
+  return {
+    chart: { toolbar: { show: false } },
+    dataLabels: { enabled: false },
+    stroke: { show: true, width: 2, colors: ['transparent'] },
+    colors: ['#5c1ac3', '#ffbb44'],
+    dropShadow: { enabled: true, opacity: 0.3, blur: 1, left: 1, top: 1, color: '#515365' },
+    plotOptions: { bar: { horizontal: false, columnWidth: '60%', borderRadius: 8 } },
+    legend: {
+      position: 'bottom',
+      horizontalAlign: 'center',
+      fontSize: '14px',
+      markers: { width: 12, height: 12 },
+      itemMargin: { horizontal: 0, vertical: 8 },
+    },
+    grid: { borderColor: '#e0e6ed' },
+    xaxis: {
+      categories: categories.value,
+      axisBorder: { show: true, color: '#e0e6ed' },
+    },
+    yaxis: {
+      tickAmount: 6,
+    },
+    fill: {
+      type: 'gradient',
+      gradient: {
+        shade: 'light',
+        type: 'vertical',
+        shadeIntensity: 0.3,
+        inverseColors: false,
+        opacityFrom: 1,
+        opacityTo: 0.9,
+        stops: [0, 100],
+      },
+    },
+    tooltip: {
+      theme: 'light',
+      y: {
+        formatter: function (val) {
+          return val
+        },
+      },
+    },
+  }
+})
 </script>

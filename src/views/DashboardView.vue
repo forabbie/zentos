@@ -11,8 +11,7 @@
           <TotalBalance class="w-full" />
         </div>
         <div class="card">
-          <Transactions v-show="false" />
-          <VerticalBar />
+          <Transactions />
         </div>
       </div>
       <div class="flex w-2/5 flex-col gap-4">
@@ -31,5 +30,4 @@ import Transactions from '@/modules/dashboard/Transactions.vue'
 import TotalBalance from '@/modules/dashboard/TotalBalance.vue'
 import Savings from '@/modules/dashboard/Savings.vue'
 import ActivityLog from '@/modules/dashboard/ActivityLog.vue'
-import VerticalBar from '@/components/charts/VerticalBar.vue'
 </script>

@@ -44,7 +44,6 @@ watch(selectedDate, async () => {
 onMounted(async () => {
   await getTransactions({ month: selectedDate.value, type: 'income' })
   savingsList.value = await getWallets({ type: 'savings' })
-  console.log(savingsList.value)
 
   plotChartData()
   plotChartOptions()

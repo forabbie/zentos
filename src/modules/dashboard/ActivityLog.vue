@@ -7,8 +7,8 @@
         <i class="pi pi-arrow-circle-right"></i>
       </RouterLink>
     </div>
-    <div class="h-full max-h-75 min-h-75 !overflow-auto">
-      <div v-if="transactions.length <= 0" class="flex min-h-75 items-center justify-center">
+    <div class="h-full max-h-60 min-h-60 !overflow-auto">
+      <div v-if="transactions.length <= 0" class="flex min-h-60 items-center justify-center">
         <div class="mb-10 text-center text-base text-[#7086A4]">No transaction found.</div>
       </div>
       <Timeline
