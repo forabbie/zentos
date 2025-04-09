@@ -1,8 +1,8 @@
 <template>
   <div class="rounded-lg bg-white shadow-md">
     <div class="px-4 pt-4 pb-0 text-black">
-      <h2 class="">Savings</h2>
-      <p class="text-3xl font-bold">{{ formatToCurrency(income) }}</p>
+      <h2 class="">Total Savings</h2>
+      <p class="text-3xl font-bold">{{ formatToCurrency(savings) }}</p>
     </div>
     <apexchart
       v-if="savingsOptions"
@@ -18,16 +18,21 @@
 import { ref, computed, watch, onMounted } from 'vue'
 
 import { formatToCurrency } from '@/utils/format'
+
 import { useGlobalStore } from '@/stores/global.store'
 import { useTransactionStore } from '@/stores/transactions.store'
+import { useWalletStore } from '@/stores/wallets.store'
 
 const globalStore = useGlobalStore()
 const transactionStore = useTransactionStore()
+const walletStore = useWalletStore()
 
 const savingsSeries = ref([])
 const savingsOptions = ref(null)
 
 const transIncome = ref([])
+const savingsList = ref(null)
+
 const selectedDate = computed(() => globalStore.selectedDate)
 
 watch(selectedDate, async () => {
@@ -38,6 +43,9 @@ watch(selectedDate, async () => {
 
 onMounted(async () => {
   await getTransactions({ month: selectedDate.value, type: 'income' })
+  savingsList.value = await getWallets({ type: 'savings' })
+  console.log(savingsList.value)
+
   plotChartData()
   plotChartOptions()
 })
@@ -45,6 +53,11 @@ onMounted(async () => {
 const getTransactions = async (month) => {
   const data = await transactionStore.getTransactions(month)
   transIncome.value = data.response
+}
+
+const getWallets = async (type) => {
+  const data = await walletStore.getWallets(type)
+  return data.response
 }
 
 const plotChartData = () => {
@@ -99,5 +112,9 @@ const plotChartOptions = () => {
 
 const income = computed(() => {
   return transIncome.value?.reduce((sum, t) => sum + t.amount, 0) ?? 0
+})
+
+const savings = computed(() => {
+  return savingsList.value?.reduce((sum, t) => sum + t.balance, 0) ?? 0
 })
 </script>
