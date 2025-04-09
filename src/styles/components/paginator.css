@@ -1,0 +1,9 @@
+.p-paginator.custom-paginator {
+  @apply bg-white;
+}
+.p-paginator.custom-paginator .p-paginator-content {
+  @apply gap-4 text-sm;
+}
+.p-paginator.custom-paginator .p-paginator-content button {
+  @apply size-10;
+}

@@ -67,3 +67,7 @@
   .p-button.p-datatable-row-editor-init {
   @apply text-indigo-500 hover:bg-indigo-100 hover:text-indigo-600;
 }
+
+.p-datatable-footer.custom-dt-footer {
+  @apply rounded-lg border-0 bg-white py-0;
+}

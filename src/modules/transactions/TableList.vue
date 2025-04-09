@@ -7,6 +7,7 @@
     pt:root="custom-dt"
     pt:header="custom-dt-header"
     pt:table="custom-dt-table"
+    pt:footer="custom-dt-footer"
   >
     <template #header>
       <div class="flex items-center justify-between">
@@ -86,11 +87,12 @@
       <Paginator
         :rows="limit"
         :totalRecords="totalTransactions"
-        :currentPageReportTemplate="'{first} to {last} of {totalRecords}'"
+        :currentPageReportTemplate="'Showing {first} to {last} of {totalRecords}'"
         :template="'PrevPageLink CurrentPageReport NextPageLink'"
         @page="onPage"
+        pt:root="custom-paginator"
       >
-        <template #start>
+        <!-- <template #start>
           <span class="text-xs text-white">Show</span>
         </template>
         <template #previcon>
@@ -98,7 +100,7 @@
         </template>
         <template #nexticon>
           <i class="pi pi-chevron-right text-xs"></i>
-        </template>
+        </template> -->
       </Paginator>
     </template>
   </DataTable>
