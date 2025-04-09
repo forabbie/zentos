@@ -51,11 +51,11 @@
       :showFilterMenu="false"
     >
       <template #body="{ data }">
-        <div v-if="data && data.note" class="text-sm capitalize">
+        <div v-if="data" class="text-sm capitalize">
           <span v-if="field.key === 'amount'"> {{ formatToCurrency(data[field.key]) }}</span>
           <span v-else-if="field.key === 'date'"> {{ convertDateToWords(data[field.key]) }}</span>
           <div v-else>
-            <span>{{ data[field.key] }}</span>
+            <span>{{ data[field.key] ?? '-' }}</span>
           </div>
         </div>
       </template>
@@ -117,13 +117,13 @@
   >
     <div class="flex flex-col gap-6 pt-2 text-sm">
       <div>
-        <span class="mb-3 block font-bold">From Account: </span>
+        <span class="mb-3 block font-bold">Account: </span>
         <Select
           v-model="transaction.account_id"
           :options="walletOptions"
           optionLabel="label"
           optionValue="value"
-          placeholder="Select a account"
+          placeholder="Select account"
           fluid
           pt:root="custom-select"
           pt:label="custom-select-label"
@@ -135,7 +135,7 @@
           </template>
         </Select>
         <small v-if="submitted && !transaction.account_id" class="text-red-500"
-          >From Account is required.</small
+          >Account is required.</small
         >
       </div>
 
@@ -399,7 +399,6 @@ const saveTransaction = () => {
       transactions.value[transaction.value.id - 1] = transactionStore.mapTransaction({
         ...transaction.value,
       })
-
       storedTransactions[transaction.value.id - 1] = {
         id: transaction.value.id,
         type: transaction.value.type,
@@ -409,10 +408,6 @@ const saveTransaction = () => {
         note: transaction.value.note,
         date: transaction.value.date,
       }
-
-      transactionStore.saveTransactionsDataToLocalStorage(storedTransactions)
-
-      getTransactions(limit.value, page.value)
 
       toast.add({
         severity: 'success',
@@ -425,9 +420,6 @@ const saveTransaction = () => {
       transactions.value.push(transactionStore.mapTransaction(transaction.value))
 
       storedTransactions.push({ ...transaction.value })
-      transactionStore.saveTransactionsDataToLocalStorage(storedTransactions)
-
-      getTransactions(limit.value, page.value)
 
       toast.add({
         severity: 'success',
@@ -437,6 +429,12 @@ const saveTransaction = () => {
       })
     }
 
+    transactionStore.saveTransactionsDataToLocalStorage(storedTransactions)
+
+    getTransactions(limit.value, page.value)
+
+    walletStore.updateWalletBalance(transaction.value)
+
     submitted.value = false
     transactionDialog.value = false
     transaction.value = {}
@@ -444,8 +442,6 @@ const saveTransaction = () => {
 }
 
 const editTransaction = (data) => {
-  console.log(data)
-
   transaction.value = {
     id: data.id,
     type: data.type,
@@ -474,15 +470,15 @@ const deleteTransaction = () => {
 
   getTransactions(limit.value, page.value)
 
+  deleteTransactionDialog.value = false
+  transaction.value = {}
+
   toast.add({
     severity: 'success',
     summary: 'Successful',
     detail: 'Transaction Deleted',
     life: 3000,
   })
-
-  deleteTransactionDialog.value = false
-  transaction.value = {}
 }
 
 const exportCSV = () => {

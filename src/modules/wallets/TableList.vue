@@ -294,11 +294,15 @@ const iconOptions = [
   { label: 'Savings', value: 'piggy-bank' },
 ]
 
-onMounted(() => {
-  walletStore.getWallets().then((data) => {
+onMounted(async () => {
+  await getWallets()
+})
+
+const getWallets = async () => {
+  await walletStore.getWallets().then((data) => {
     wallets.value = data.response
   })
-})
+}
 
 const walletDialog = ref(false)
 const deleteWalletDialog = ref(false)
@@ -323,12 +327,16 @@ const saveWallet = () => {
   submitted.value = true
 
   if (wallet?.value.name?.trim()) {
+    const storedWallets = walletStore.getWalletsDataFromLocalStorage()
+
     if (wallet.value.id) {
       wallet.value.appearance.icon =
         wallet.value.type.toLowerCase() === 'savings' ? 'piggy-bank' : 'wallet'
       wallet.value.appearance.color =
         wallet.value.type.toLowerCase() === 'savings' ? 'green' : 'orange'
       wallets.value[wallet.value.id - 1] = { ...wallet.value }
+
+      storedWallets[wallet.value.id - 1] = { ...wallet.value }
 
       toast.add({
         severity: 'success',
@@ -343,6 +351,9 @@ const saveWallet = () => {
       wallet.value.appearance.color =
         wallet.value.type.toLowerCase() === 'savings' ? 'green' : 'orange'
       wallets.value.push(wallet.value)
+
+      storedWallets.push({ ...wallet.value })
+
       toast.add({
         severity: 'success',
         summary: 'Successful',
@@ -350,6 +361,10 @@ const saveWallet = () => {
         life: 3000,
       })
     }
+
+    walletStore.saveWalletsDataToLocalStorage(storedWallets)
+
+    getWallets()
 
     walletDialog.value = false
     wallet.value = {
@@ -372,7 +387,15 @@ const confirmDeleteTransaction = (data) => {
 }
 
 const deleteWallet = () => {
-  wallets.value = wallets.value.filter((val) => val.id !== wallet.value.id)
+  const storedWallets = walletStore.getWalletsDataFromLocalStorage()
+  const updatedWallets = storedWallets.filter((w) => w.id !== wallet.value.id)
+
+  walletStore.saveWalletsDataToLocalStorage(updatedWallets)
+
+  wallets.value = wallets.value.filter((w) => w.id !== wallet.value.id)
+
+  getWallets()
+
   deleteWalletDialog.value = false
   wallet.value = {
     appearance: {
