@@ -5,10 +5,10 @@
         <div class="account-box">
           <div class="info">
             <div class="inv-title">
-              <h5>Total Balance</h5>
+              <h5>Savings</h5>
             </div>
             <div class="inv-balance-info">
-              <p class="inv-balance">$ 41,741.42</p>
+              <p class="inv-balance">{{ formatToCurrency(savings) ?? 0 }}</p>
               <span class="inv-stats balance-credited">+ 2453</span>
             </div>
           </div>
@@ -40,7 +40,49 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, onMounted, watch, computed } from 'vue'
+
+import { formatToCurrency } from '@/utils/format'
+
+import { useTransactionStore } from '@/stores/transactions.store'
+import { useGlobalStore } from '@/stores/global.store'
+import { useWalletStore } from '@/stores/wallets.store'
+
+const transactionStore = useTransactionStore()
+const globalStore = useGlobalStore()
+const walletStore = useWalletStore()
+
+const transIncome = ref(null)
+const savingsList = ref(null)
+
+const selectedDate = computed(() => globalStore.selectedDate)
+
+watch(selectedDate, async () => {
+  transIncome.value = await getTransactions({ month: selectedDate.value, type: 'income' })
+})
+
+onMounted(async () => {
+  transIncome.value = await getTransactions({ month: selectedDate.value, type: 'income' })
+  savingsList.value = await getWallets({ type: 'savings' })
+})
+
+const getTransactions = async (month, type) => {
+  const data = await transactionStore.getTransactions(month, type)
+  return data.response
+}
+
+const getWallets = async (type) => {
+  const data = await walletStore.getWallets(type)
+  return data.response
+}
+
+const income = computed(() => {
+  return transIncome.value?.reduce((sum, t) => sum + t.amount, 0) ?? 0
+})
+
+const savings = computed(() => {
+  return savingsList.value?.reduce((sum, t) => sum + t.balance, 0) ?? 0
+})
 </script>
 
 <style scoped>

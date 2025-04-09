@@ -5,10 +5,10 @@
     </div>
     <div class="flex gap-4">
       <div class="flex h-full w-full flex-col gap-4">
-        <Finances />
+        <AccountOverview />
         <div class="flex gap-4">
           <Networth class="w-full" />
-          <Savings class="w-full" />
+          <TotalBalance class="w-full" />
         </div>
         <div class="card">
           <Transactions v-show="false" />
@@ -16,7 +16,7 @@
         </div>
       </div>
       <div class="flex w-2/5 flex-col gap-4">
-        <Expenses />
+        <ExpensesChart />
         <ActivityLog />
       </div>
     </div>
@@ -25,12 +25,10 @@
 
 <script setup>
 import Greetings from '@/modules/dashboard/Greetings.vue'
-import Finances from '@/modules/dashboard/Finances.vue'
-import Spendings from '@/modules/dashboard/Spendings.vue'
-import Expenses from '@/modules/dashboard/Expenses.vue'
+import AccountOverview from '@/modules/dashboard/AccountOverview.vue'
+import ExpensesChart from '@/modules/dashboard/ExpensesChart.vue'
 import Transactions from '@/modules/dashboard/Transactions.vue'
-import Balance from '@/modules/dashboard/Balance.vue'
-import Savings from '@/modules/dashboard/Savings.vue'
+import TotalBalance from '@/modules/dashboard/TotalBalance.vue'
 import Networth from '@/modules/dashboard/Networth.vue'
 import ActivityLog from '@/modules/dashboard/ActivityLog.vue'
 import VerticalBar from '@/components/charts/VerticalBar.vue'

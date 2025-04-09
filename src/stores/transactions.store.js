@@ -65,7 +65,6 @@ export const useTransactionStore = defineStore('transaction', () => {
 
     const total = filteredTransactions.length
 
-    // If limit is not specified, display all data (set limit to total length)
     const effectiveLimit = limit !== undefined ? limit : total
 
     const startIndex = (page - 1) * effectiveLimit
@@ -81,7 +80,6 @@ export const useTransactionStore = defineStore('transaction', () => {
       response: mappedTransactions,
     }
 
-    // Include 'limit' only if it's specified
     if (limit !== undefined) {
       result.limit = limit
     }
