@@ -5,6 +5,12 @@ export const year = now.getFullYear()
 
 export const currentMonth = `${year}-${month}`
 
+export const convertToMonthYear = (date) => {
+  const month = (date.getMonth() + 1).toString().padStart(2, '0')
+  const year = date.getFullYear()
+  return `${year}-${month}`
+}
+
 export function getMonthDays(year, month) {
   return new Date(year, month, 0).getDate()
 }

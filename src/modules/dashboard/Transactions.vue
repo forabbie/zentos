@@ -1,5 +1,5 @@
 <template>
-  <div class="card">
+  <div>
     <div class="mb-6 flex items-center justify-between">
       <h2 class="card-title">Transactions</h2>
       <div>

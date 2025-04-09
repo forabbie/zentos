@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col gap-4">
+  <div class="flex grow flex-col gap-4">
     <div class="rounded-xl bg-white shadow-sm">
       <TableList />
     </div>

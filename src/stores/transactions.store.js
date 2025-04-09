@@ -44,7 +44,7 @@ export const useTransactionStore = defineStore('transaction', () => {
     }
   }
 
-  const getTransactions = ({ month, type, page = 1, limit } = {}) => {
+  const getTransactions = ({ month, type = null, page = 1, limit } = {}) => {
     let filteredTransactions = getTransactionsDataFromLocalStorage()
 
     // Filter by month if provided
@@ -60,6 +60,8 @@ export const useTransactionStore = defineStore('transaction', () => {
         (transaction) => transaction.type.toLowerCase() === type.toLowerCase(),
       )
     }
+
+    filteredTransactions.sort((a, b) => new Date(b.date) - new Date(a.date))
 
     const total = filteredTransactions.length
 

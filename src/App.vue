@@ -1,12 +1,14 @@
 <template>
-  <div class="app">
+  <div class="flex h-screen">
     <AppSidebar />
-    <main id="app-main " class="flex grow flex-col bg-slate-50">
+    <main class="flex flex-grow flex-col overflow-auto bg-slate-50">
       <AppHeader />
-      <section class="grow p-4">
-        <RouterView />
+      <section class="flex flex-grow flex-col overflow-auto p-4">
+        <div class="flex-grow">
+          <RouterView />
+        </div>
+        <AppFooter />
       </section>
-      <AppFooter />
     </main>
   </div>
 </template>

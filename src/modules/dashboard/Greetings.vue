@@ -31,9 +31,17 @@
 import Button from 'primevue/button'
 import DatePicker from 'primevue/datepicker'
 
-import { ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 
-const currentDate = new Date()
-const formattedDate = currentDate.toLocaleDateString('en-US')
-const date = ref(formattedDate)
+import { convertToMonthYear } from '@/utils/date'
+
+import { useGlobalStore } from '@/stores/global.store'
+
+const globalStore = useGlobalStore()
+
+const date = ref(globalStore.selectedDate)
+
+watch(date, (newVal) => {
+  globalStore.selectedDate = convertToMonthYear(newVal)
+})
 </script>

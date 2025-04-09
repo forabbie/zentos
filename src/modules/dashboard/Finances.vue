@@ -16,20 +16,28 @@
 import IconIncome from '@/components/icons/IconIncome.vue'
 import IconExpense from '@/components/icons/IconExpense.vue'
 import IconSpentLeft from '@/components/icons/IconSpentLeft.vue'
-import { computed, markRaw, ref, onMounted } from 'vue'
-import { currentMonth } from '@/utils/date'
+import { computed, markRaw, ref, onMounted, watch } from 'vue'
 import { formatToCurrency } from '@/utils/format'
 
 import { useTransactionStore } from '@/stores/transactions.store'
+import { useGlobalStore } from '@/stores/global.store'
 
+const globalStore = useGlobalStore()
 const transactionStore = useTransactionStore()
 
 const transExpense = ref(null)
 const transIncome = ref(null)
 
+const selectedDate = computed(() => globalStore.selectedDate)
+
+watch(selectedDate, async () => {
+  transExpense.value = await getTransactions({ month: selectedDate.value, type: 'expense' })
+  transIncome.value = await getTransactions({ month: selectedDate.value, type: 'income' })
+})
+
 onMounted(async () => {
-  transExpense.value = await getTransactions({ month: currentMonth, type: 'expense' })
-  transIncome.value = await getTransactions({ month: currentMonth, type: 'income' })
+  transExpense.value = await getTransactions({ month: selectedDate.value, type: 'expense' })
+  transIncome.value = await getTransactions({ month: selectedDate.value, type: 'income' })
 })
 
 const getTransactions = async (month, type) => {

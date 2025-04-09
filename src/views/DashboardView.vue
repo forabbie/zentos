@@ -10,16 +10,18 @@
           <Networth class="w-full" />
           <Savings class="w-full" />
         </div>
-        <div v-if="true">
-          <Transactions />
+        <div class="card">
+          <Transactions v-show="false" />
+          <VerticalBar />
         </div>
       </div>
-      <div class="card w-2/5">
-        <Expenses />
+      <div class="w-2/5">
+        <ActivityLog />
       </div>
     </div>
   </div>
 </template>
+<!-- <Expenses v-if="false" /> -->
 
 <script setup>
 import Greetings from '@/modules/dashboard/Greetings.vue'
@@ -30,4 +32,6 @@ import Transactions from '@/modules/dashboard/Transactions.vue'
 import Balance from '@/modules/dashboard/Balance.vue'
 import Savings from '@/modules/dashboard/Savings.vue'
 import Networth from '@/modules/dashboard/Networth.vue'
+import ActivityLog from '@/modules/dashboard/ActivityLog.vue'
+import VerticalBar from '@/components/charts/VerticalBar.vue'
 </script>
