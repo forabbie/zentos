@@ -17,6 +17,11 @@ const routes = [
     name: 'wallets',
     component: () => import('@/views/WalletsView.vue'),
   },
+  ,
+  {
+    path: '/:catchAll(.*)',
+    redirect: { name: 'dashboard' },
+  },
 ]
 
 const router = createRouter({
