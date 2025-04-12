@@ -36,6 +36,7 @@
       <Column :exportable="false" header="Display Icon" :showFilterMenu="false" style="width: 8rem">
         <template #body="{ data }">
           <div
+            v-if="data"
             :class="['flex size-10 shrink-0 items-center justify-center rounded-xl']"
             :style="{
               'background-color': `rgba(${hexToRgb(data.color).r}, ${hexToRgb(data.color).g}, ${hexToRgb(data.color).b}, ${0.1})`,
