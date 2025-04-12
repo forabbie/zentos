@@ -7,7 +7,11 @@
         <i class="pi pi-arrow-circle-right"></i>
       </RouterLink>
     </div>
+    <div v-if="loading" class="flex h-[350px] items-center justify-center">
+      <i class="pi pi-spin pi-spinner text-2xl text-indigo-500"></i>
+    </div>
     <apexchart
+      v-else
       height="350"
       type="bar"
       :options="transactionOption"
@@ -18,79 +22,76 @@
 
 <script setup>
 import { ref, computed, watch, onMounted } from 'vue'
-
 import { useTransactionStore } from '@/stores/transactions.store'
 import { useGlobalStore } from '@/stores/global.store'
 
 const globalStore = useGlobalStore()
 const transactionStore = useTransactionStore()
 
-const transExpense = ref(null)
-const transIncome = ref(null)
+const transExpense = ref([])
+const transIncome = ref([])
 
+const transactionSeries = ref([])
+const allDaysInMonth = ref([])
+const categories = ref([])
+
+const loading = ref(false)
 const selectedDate = computed(() => globalStore.selectedDate)
-
-watch(selectedDate, async () => {
-  transExpense.value = await getTransactions({ month: selectedDate.value, type: 'expense' })
-  transIncome.value = await getTransactions({ month: selectedDate.value, type: 'income' })
-  plotTransactionData()
-})
-
-onMounted(async () => {
-  transExpense.value = await getTransactions({ month: selectedDate.value, type: 'expense' })
-  transIncome.value = await getTransactions({ month: selectedDate.value, type: 'income' })
-  plotTransactionData()
-})
 
 const getTransactions = async (month, type) => {
   const data = await transactionStore.getTransactions(month, type)
   return data.response
 }
 
-const transactionSeries = ref([])
-const allDaysInMonth = ref([])
-const categories = ref([])
+const fetchTransactions = async () => {
+  loading.value = true
+  try {
+    const [expense, income] = await Promise.all([
+      getTransactions({ month: selectedDate.value, type: 'expense' }),
+      getTransactions({ month: selectedDate.value, type: 'income' }),
+    ])
+    transExpense.value = expense
+    transIncome.value = income
+    plotTransactionData()
+  } catch (error) {
+    console.error('Error fetching transactions:', error)
+  } finally {
+    loading.value = false
+  }
+}
+
+onMounted(fetchTransactions)
+watch(selectedDate, fetchTransactions)
 
 const plotTransactionData = () => {
   const dailyIncomeMap = {}
   const dailyExpenseMap = {}
 
-  // Process income transactions
-  transIncome.value.forEach((transaction) => {
-    const transactionDate = new Date(transaction.date)
-    const dateKey = transactionDate.toISOString().split('T')[0]
-
-    if (!dailyIncomeMap[dateKey]) {
-      dailyIncomeMap[dateKey] = 0
-    }
-    dailyIncomeMap[dateKey] += transaction.amount
+  transIncome.value.forEach((t) => {
+    const dateKey = new Date(t.date).toISOString().split('T')[0]
+    dailyIncomeMap[dateKey] = (dailyIncomeMap[dateKey] || 0) + t.amount
   })
 
-  // Process expense transactions
-  transExpense.value.forEach((transaction) => {
-    const date = new Date(transaction.date)
-    const dateKey = date.toISOString().split('T')[0]
-
-    if (!dailyExpenseMap[dateKey]) {
-      dailyExpenseMap[dateKey] = 0
-    }
-    dailyExpenseMap[dateKey] += transaction.amount
+  transExpense.value.forEach((t) => {
+    const dateKey = new Date(t.date).toISOString().split('T')[0]
+    dailyExpenseMap[dateKey] = (dailyExpenseMap[dateKey] || 0) + t.amount
   })
 
   const monthStart = new Date(selectedDate.value)
   const monthEnd = new Date(monthStart.getFullYear(), monthStart.getMonth() + 1, 0)
 
+  allDaysInMonth.value = []
+  categories.value = []
+
   for (let day = 1; day <= monthEnd.getDate(); day++) {
     const dayString = `${monthStart.getFullYear()}-${String(monthStart.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
-    const label = `${String(day).padStart(2, '0')}`
     allDaysInMonth.value.push(dayString)
-    categories.value.push(label)
+    categories.value.push(String(day).padStart(2, '0'))
   }
 
   const incomeData = allDaysInMonth.value.map((day) => dailyIncomeMap[day] || 0)
   const expenseData = allDaysInMonth.value.map((day) => dailyExpenseMap[day] || 0)
 
-  // Remove the empty data points (where both income and expense are zero)
   const filteredIncomeData = []
   const filteredExpenseData = []
   const filteredCategories = []
@@ -110,49 +111,43 @@ const plotTransactionData = () => {
   categories.value = filteredCategories
 }
 
-const transactionOption = computed(() => {
-  return {
-    chart: { toolbar: { show: false } },
-    dataLabels: { enabled: false },
-    stroke: { show: true, width: 2, colors: ['transparent'] },
-    colors: ['#5c1ac3', '#ffbb44'],
-    dropShadow: { enabled: true, opacity: 0.3, blur: 1, left: 1, top: 1, color: '#515365' },
-    plotOptions: { bar: { horizontal: false, columnWidth: '60%', borderRadius: 8 } },
-    legend: {
-      position: 'bottom',
-      horizontalAlign: 'center',
-      fontSize: '14px',
-      markers: { width: 12, height: 12 },
-      itemMargin: { horizontal: 0, vertical: 8 },
+const transactionOption = computed(() => ({
+  chart: { toolbar: { show: false } },
+  dataLabels: { enabled: false },
+  stroke: { show: true, width: 2, colors: ['transparent'] },
+  colors: ['#5c1ac3', '#ffbb44'],
+  dropShadow: { enabled: true, opacity: 0.3, blur: 1, left: 1, top: 1, color: '#515365' },
+  plotOptions: { bar: { horizontal: false, columnWidth: '60%', borderRadius: 8 } },
+  legend: {
+    position: 'bottom',
+    horizontalAlign: 'center',
+    fontSize: '14px',
+    markers: { width: 12, height: 12 },
+    itemMargin: { horizontal: 0, vertical: 8 },
+  },
+  grid: { borderColor: '#e0e6ed' },
+  xaxis: {
+    categories: categories.value,
+    axisBorder: { show: true, color: '#e0e6ed' },
+  },
+  yaxis: { tickAmount: 6 },
+  fill: {
+    type: 'gradient',
+    gradient: {
+      shade: 'light',
+      type: 'vertical',
+      shadeIntensity: 0.3,
+      inverseColors: false,
+      opacityFrom: 1,
+      opacityTo: 0.9,
+      stops: [0, 100],
     },
-    grid: { borderColor: '#e0e6ed' },
-    xaxis: {
-      categories: categories.value,
-      axisBorder: { show: true, color: '#e0e6ed' },
+  },
+  tooltip: {
+    theme: 'light',
+    y: {
+      formatter: (val) => val,
     },
-    yaxis: {
-      tickAmount: 6,
-    },
-    fill: {
-      type: 'gradient',
-      gradient: {
-        shade: 'light',
-        type: 'vertical',
-        shadeIntensity: 0.3,
-        inverseColors: false,
-        opacityFrom: 1,
-        opacityTo: 0.9,
-        stops: [0, 100],
-      },
-    },
-    tooltip: {
-      theme: 'light',
-      y: {
-        formatter: function (val) {
-          return val
-        },
-      },
-    },
-  }
-})
+  },
+}))
 </script>

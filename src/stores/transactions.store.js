@@ -31,6 +31,9 @@ export const useTransactionStore = defineStore('transaction', () => {
     const category = categoryStore.getCategoryById(transaction.category_id)
     const wallet = walletStore.getWalletById(transaction.account_id)
 
+    const utcDate = new Date(transaction.date)
+    const phTime = new Date(utcDate.getTime() + 8 * 60 * 60 * 1000)
+
     return {
       id: transaction.id,
       type: transaction.type,
@@ -40,7 +43,7 @@ export const useTransactionStore = defineStore('transaction', () => {
       account: { ...wallet },
       amount: transaction.amount,
       note: transaction.note,
-      date: transaction.date,
+      date: phTime,
     }
   }
 
