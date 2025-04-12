@@ -40,7 +40,7 @@ import Chart from 'primevue/chart'
 
 import { ref, onMounted, computed } from 'vue'
 
-import { formatToCurrency } from '@/utils/format'
+import { formatToCurrency } from '@/utils/helper'
 import { currentMonth } from '@/utils/date'
 
 import { useTransactionStore } from '@/stores/transactions.store'
@@ -107,7 +107,7 @@ const calculateCategoryHeadTotals = (transactions) => {
         totalHead.categories.push({
           name: category.name,
           totalAmount: transaction.amount,
-          color: category.appearance.color,
+          color: category.color,
         })
       }
     })

@@ -4,265 +4,205 @@ export const getCategoriesData = () => {
       id: 1,
       name: 'transfer',
       head: 'misceleneous',
-      appearance: {
-        color: 'gray',
-      },
+      color: '#64748b',
     },
     {
       id: 2,
       name: 'misceleneous',
       head: 'misceleneous',
-      appearance: {
-        color: 'gray',
-      },
+      color: '#64748b',
     },
     {
       id: 3,
       name: 'Clothes',
       head: 'misceleneous',
-      appearance: {
-        color: 'gray',
-      },
+      color: '#64748b',
     },
     {
       id: 4,
       name: 'Food',
       head: 'food & drinks',
-      appearance: {
-        color: 'blue',
-      },
+      color: '#0ea5e9',
     },
     {
       id: 5,
       name: 'Drinks',
       head: 'food & drinks',
-      appearance: {
-        color: 'blue',
-      },
+      color: '#0ea5e9',
     },
     {
       id: 6,
       name: 'Groceries',
       head: 'food & drinks',
-      appearance: {
-        color: 'blue',
-      },
+      color: '#0ea5e9',
     },
     {
       id: 7,
       name: 'Restaurants',
       head: 'food & drinks',
-      appearance: {
-        color: 'blue',
-      },
+      color: '#0ea5e9',
     },
     {
       id: 8,
       name: 'Coffee',
       head: 'food & drinks',
-      appearance: {
-        color: 'blue',
-      },
+      color: '#0ea5e9',
     },
     {
       id: 9,
       name: 'Bills',
       head: 'housing',
-      appearance: {
-        color: 'orange',
-      },
+      color: '#f97316',
     },
     {
       id: 10,
       name: 'Rent',
       head: 'housing',
-      appearance: {
-        color: 'orange',
-      },
+      color: '#f97316',
     },
     {
       id: 11,
       name: 'Mortgage',
       head: 'housing',
-      appearance: {
-        color: 'orange',
-      },
+      color: '#f97316',
     },
     {
       id: 12,
       name: 'Utilities',
       head: 'housing',
-      appearance: {
-        color: 'orange',
-      },
+      color: '#f97316',
     },
     {
       id: 13,
       name: 'Gas',
       head: 'transportation',
-      appearance: {
-        color: 'green',
-      },
+      color: '#22c55e',
     },
     {
       id: 14,
       name: 'Public Transport',
       head: 'transportation',
-      appearance: {
-        color: 'green',
-      },
+      color: '#22c55e',
     },
     {
       id: 15,
       name: 'Car Maintenance',
       head: 'transportation',
-      appearance: {
-        color: 'green',
-      },
+      color: '#22c55e',
     },
     {
       id: 16,
       name: 'Car Insurance',
       head: 'transportation',
-      appearance: {
-        color: 'green',
-      },
+      color: '#22c55e',
     },
     {
       id: 17,
       name: 'Car Payment',
       head: 'transportation',
-      appearance: {
-        color: 'green',
-      },
+      color: '#22c55e',
     },
     {
       id: 18,
       name: 'Gasoline',
       head: 'transportation',
-      appearance: {
-        color: 'green',
-      },
+      color: '#22c55e',
     },
     {
       id: 19,
       name: 'Entertainment',
       head: 'entertainment',
-      appearance: {
-        color: 'purple',
-      },
+      color: '#a855f7',
     },
     {
       id: 20,
       name: 'Movies',
       head: 'entertainment',
-      appearance: {
-        color: 'purple',
-      },
+      color: '#a855f7',
     },
     {
       id: 21,
       name: 'Concerts',
       head: 'entertainment',
-      appearance: {
-        color: 'purple',
-      },
+      color: '#a855f7',
     },
     {
       id: 22,
       name: 'Subscriptions',
       head: 'entertainment',
-      appearance: {
-        color: 'purple',
-      },
+      color: '#a855f7',
     },
     {
       id: 23,
       name: 'Streaming Services',
       head: 'entertainment',
-      appearance: {
-        color: 'purple',
-      },
+      color: '#a855f7',
     },
     {
       id: 24,
       name: 'Hobbies',
       head: 'entertainment',
-      appearance: {
-        color: 'purple',
-      },
+      color: '#a855f7',
     },
     {
       id: 25,
       name: 'Health & Fitness',
       head: 'health & fitness',
-      appearance: {
-        color: 'red',
-      },
+      color: '#ef4444',
     },
     {
       id: 26,
       name: 'Gym Memberships',
       head: 'health & fitness',
-      appearance: {
-        color: 'red',
-      },
+      color: '#ef4444',
     },
     {
       id: 27,
       name: 'Medical Bills',
       head: 'health & fitness',
-      appearance: {
-        color: 'red',
-      },
+      color: '#ef4444',
     },
     {
       id: 28,
       name: 'Health Insurance',
       head: 'health & fitness',
-      appearance: {
-        color: 'red',
-      },
+      color: '#ef4444',
     },
     {
       id: 29,
       name: 'Medications',
       head: 'health & fitness',
-      appearance: {
-        color: 'red',
-      },
+      color: '#ef4444',
     },
     {
       id: 30,
       name: 'Savings',
       head: 'savings',
-      appearance: {
-        color: 'yellow',
-      },
+      color: '#f59e0b',
     },
     {
       id: 31,
       name: 'Investments',
       head: 'savings',
-      appearance: {
-        color: 'yellow',
-      },
+      color: '#f59e0b',
     },
     {
       id: 32,
       name: 'Emergency Fund',
       head: 'savings',
-      appearance: {
-        color: 'yellow',
-      },
+      color: '#f59e0b',
     },
     {
       id: 33,
       name: 'Retirement Fund',
       head: 'savings',
-      appearance: {
-        color: 'yellow',
-      },
+      color: '#f59e0b',
+    },
+    {
+      id: 34,
+      name: 'Others',
+      head: 'misceleneous',
+      color: '#64748b',
     },
   ]
 }
@@ -277,7 +217,7 @@ export const getCategoryByName = (name) => {
   return categories.find((category) => category.name === name)
 }
 export const getCategoriesByAppearance = (color) => {
-  return categories.filter((category) => category.appearance.color === color)
+  return categories.filter((category) => category.color === color)
 }
 export const getCategoriesById = (ids) => {
   return categories.filter((category) => ids.includes(category.id))

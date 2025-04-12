@@ -17,7 +17,7 @@ import IconIncome from '@/components/icons/IconIncome.vue'
 import IconExpense from '@/components/icons/IconExpense.vue'
 import IconSpentLeft from '@/components/icons/IconSpentLeft.vue'
 import { computed, markRaw, ref, onMounted, watch } from 'vue'
-import { formatToCurrency } from '@/utils/format'
+import { formatToCurrency } from '@/utils/helper'
 
 import { useTransactionStore } from '@/stores/transactions.store'
 import { useGlobalStore } from '@/stores/global.store'

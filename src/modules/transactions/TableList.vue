@@ -36,7 +36,7 @@
     <Column field="category" header="Category" :exportable="false" :showFilterMenu="false">
       <template #body="{ data }">
         <div class="flex w-full items-center gap-2">
-          <i :class="[returnColor(data?.category?.appearance.color).text]">
+          <i :style="{ color: data?.category?.color }">
             <IconSquareRounded />
           </i>
           <span class="flex w-full text-sm font-medium capitalize">{{ data?.category?.name }}</span>
@@ -313,9 +313,7 @@ import { ref, onMounted, markRaw } from 'vue'
 import { useToast } from 'primevue/usetoast'
 
 import { convertDateToWords } from '@/utils/date'
-import { formatToCurrency } from '@/utils/format'
-import { returnColor } from '@/utils/styles'
-import { createId } from '@/utils/helper'
+import { createId, returnColor, formatToCurrency } from '@/utils/helper'
 
 import { useTransactionStore } from '@/stores/transactions.store'
 import { useCategoryStore } from '@/stores/categories.store'

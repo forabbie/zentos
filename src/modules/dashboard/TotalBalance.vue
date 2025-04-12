@@ -44,7 +44,7 @@
 <script setup>
 import { ref, onMounted, watch, computed } from 'vue'
 
-import { formatToCurrency } from '@/utils/format'
+import { formatToCurrency } from '@/utils/helper'
 
 import { useTransactionStore } from '@/stores/transactions.store'
 import { useGlobalStore } from '@/stores/global.store'

@@ -33,22 +33,16 @@
           </div>
         </div>
       </template>
-      <Column
-        :exportable="false"
-        field="apperance"
-        header="Display Icon"
-        :showFilterMenu="false"
-        style="width: 8rem"
-      >
+      <Column :exportable="false" header="Display Icon" :showFilterMenu="false" style="width: 8rem">
         <template #body="{ data }">
           <div
-            :class="[
-              'flex size-10 shrink-0 items-center justify-center rounded-xl',
-              returnColor(data.appearance.color).bg,
-            ]"
+            :class="['flex size-10 shrink-0 items-center justify-center rounded-xl']"
+            :style="{
+              'background-color': `rgba(${hexToRgb(data.color).r}, ${hexToRgb(data.color).g}, ${hexToRgb(data.color).b}, ${0.1})`,
+            }"
           >
-            <i :class="[returnColor(data.appearance.color).text]">
-              <component :is="returnIcon(data.appearance.icon)" />
+            <i class="w-6" :style="{ color: data.color }">
+              <component :is="returnIcon(data.icon)" />
             </i>
           </div>
         </template>
@@ -96,47 +90,88 @@
     <Dialog
       v-model:visible="walletDialog"
       :style="{ width: '450px' }"
-      header="Product Details"
+      header="Account Details"
       :modal="true"
       pt:root="!bg-white !text-black"
     >
       <div class="flex flex-col gap-6">
-        <!-- <img
-          v-if="product.image"
-          :src="`https://primefaces.org/cdn/primevue/images/product/${product.image}`"
-          :alt="product.image"
-          class="m-auto block pb-4"
-        /> -->
-        <div v-show="false">
-          <InputText v-model="wallet.appearance.color" fluid pt:root="custom-inputtext" />
-        </div>
-        <div v-show="false">
-          <Select
-            v-model="wallet.appearance.icon"
-            :options="iconOptions"
-            optionLabel="label"
-            optionValue="value"
-            placeholder="Select a icons"
-            fluid
-            pt:root="custom-select"
-            pt:label="custom-select-label"
-            pt:overlay="custom-select-overlay"
-            pt:option="custom-select-option"
+        <div class="grid w-full grid-cols-12 gap-4">
+          <div
+            :class="['col-span-5 flex size-34 shrink-0 items-center justify-center rounded-xl']"
+            :style="{
+              'background-color': `rgba(${hexToRgb(wallet.color).r}, ${hexToRgb(wallet.color).g}, ${hexToRgb(wallet.color).b}, ${0.1})`,
+            }"
           >
-            <template #option="slotProps">
-              <span class="text-sm capitalize">{{ slotProps.option.value }}</span>
-            </template>
-          </Select>
+            <i class="w-24" :style="{ color: wallet.color }">
+              <component :is="returnIcon(wallet.icon)" />
+            </i>
+          </div>
+          <div class="col-span-7">
+            <span class="mb-4 block font-bold">Icon Color</span>
+            <div class="flex flex-wrap gap-2">
+              <button
+                v-for="item in colorOptions"
+                :key="item.title"
+                :title="item.title"
+                type="button"
+                class="h-5 w-5 rounded-md border border-black/16 outline-0 outline-offset-2 dark:border-white/12"
+                :class="{
+                  'outline-1': wallet.color === item.value,
+                }"
+                :style="{
+                  'background-color': `rgba(${hexToRgb(item.value).r}, ${hexToRgb(item.value).g}, ${hexToRgb(item.value).b}, 1)`,
+                  'outline-color': `rgba(${hexToRgb(item.value).r}, ${hexToRgb(item.value).g}, ${hexToRgb(item.value).b}, 1)`,
+                }"
+                @click.prevent="wallet.color = item.value"
+              />
+            </div>
+          </div>
+        </div>
+        <div>
+          <span class="mb-4 block font-bold">Icon</span>
+          <div class="grid grid-cols-12 gap-4">
+            <div class="col-span-4 flex items-center gap-2">
+              <RadioButton
+                id="wallet"
+                v-model="wallet.icon"
+                name="wallet"
+                value="wallet"
+                pt:root="custom-radiobutton"
+              />
+              <label for="wallet">Wallet</label>
+            </div>
+            <div class="col-span-4 flex items-center gap-2">
+              <RadioButton
+                id="credit-card"
+                v-model="wallet.icon"
+                name="credit-card"
+                value="credit-card"
+                pt:root="custom-radiobutton"
+              />
+              <label for="credit-card">Credit Card</label>
+            </div>
+            <div class="col-span-4 flex items-center gap-2">
+              <RadioButton
+                id="piggy-bank"
+                v-model="wallet.icon"
+                name="piggy-bank"
+                value="piggy-bank"
+                pt:root="custom-radiobutton"
+              />
+              <label for="piggy-bank">Piggy Bank</label>
+            </div>
+          </div>
+          <small v-if="submitted && !wallet.icon" class="text-red-500">Icon is required.</small>
         </div>
 
         <div>
-          <label for="name" class="mb-3 block font-bold">Account Name</label>
+          <label for="name" class="mb-3 block font-bold">Name</label>
           <InputText v-model="wallet.name" fluid pt:root="custom-inputtext" />
           <small v-if="submitted && !wallet.name" class="text-red-500">Name is required.</small>
         </div>
 
         <div>
-          <span class="mb-4 block font-bold">Account Type</span>
+          <span class="mb-4 block font-bold">Type</span>
           <div class="grid grid-cols-12 gap-4">
             <div class="col-span-6 flex items-center gap-2">
               <RadioButton
@@ -237,14 +272,11 @@
 </template>
 
 <script setup>
-import Tag from 'primevue/tag'
 import Button from 'primevue/button'
-import Select from 'primevue/select'
 import RadioButton from 'primevue/radiobutton'
 import InputText from 'primevue/inputtext'
 import InputNumber from 'primevue/inputnumber'
 import Toast from 'primevue/toast'
-import Toolbar from 'primevue/toolbar'
 import Dialog from 'primevue/dialog'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
@@ -256,21 +288,14 @@ import IconWallet from '@/components/icons/IconWallet.vue'
 import { ref, onMounted, markRaw } from 'vue'
 import { useToast } from 'primevue/usetoast'
 
-import { returnColor } from '@/utils/styles'
-import { formatToCurrency } from '@/utils/format'
-import { createId } from '@/utils/helper'
+import { createId, formatToCurrency, hexToRgb } from '@/utils/helper'
 
 import { useWalletStore } from '@/stores/wallets.store'
 
 const toast = useToast()
 const walletStore = useWalletStore()
 
-const wallet = ref({
-  appearance: {
-    icon: '',
-    color: '',
-  },
-})
+const wallet = ref({})
 const wallets = ref(null)
 const submitted = ref(false)
 
@@ -288,10 +313,71 @@ const fields = [
   { key: 'balance', label: 'Balance', inputType: 'text' },
 ]
 
-const iconOptions = [
-  { label: 'Wallet', value: 'wallet' },
-  { label: 'Savings', value: 'credit-card' },
-  { label: 'Savings', value: 'piggy-bank' },
+const colorOptions = [
+  {
+    title: 'emerald',
+    value: '#10b981',
+  },
+  {
+    title: 'green',
+    value: '#22c55e',
+  },
+  {
+    title: 'lime',
+    value: '#84cc16',
+  },
+  {
+    title: 'orange',
+    value: '#f97316',
+  },
+  {
+    title: 'amber',
+    value: '#f59e0b',
+  },
+  {
+    title: 'yellow',
+    value: '#eab308',
+  },
+  {
+    title: 'teal',
+    value: '#14b8a6',
+  },
+  {
+    title: 'cyan',
+    value: '#06b6d4',
+  },
+  {
+    title: 'sky',
+    value: '#0ea5e9',
+  },
+  {
+    title: 'blue',
+    value: '#3b82f6',
+  },
+  {
+    title: 'indigo',
+    value: '#6366f1',
+  },
+  {
+    title: 'violet',
+    value: '#8b5cf6',
+  },
+  {
+    title: 'purple',
+    value: '#a855f7',
+  },
+  {
+    title: 'fuchsia',
+    value: '#d946ef',
+  },
+  {
+    title: 'pink',
+    value: '#ec4899',
+  },
+  {
+    title: 'rose',
+    value: '#f43f5e',
+  },
 ]
 
 onMounted(async () => {
@@ -309,10 +395,9 @@ const deleteWalletDialog = ref(false)
 
 const openNew = () => {
   wallet.value = {
-    appearance: {
-      icon: '',
-      color: '',
-    },
+    type: 'savings',
+    icon: 'wallet',
+    color: '#10b981',
   }
   submitted.value = false
   walletDialog.value = true
@@ -330,10 +415,6 @@ const saveWallet = () => {
     const storedWallets = walletStore.getWalletsDataFromLocalStorage()
 
     if (wallet.value.id) {
-      wallet.value.appearance.icon =
-        wallet.value.type.toLowerCase() === 'savings' ? 'piggy-bank' : 'wallet'
-      wallet.value.appearance.color =
-        wallet.value.type.toLowerCase() === 'savings' ? 'green' : 'orange'
       wallets.value[wallet.value.id - 1] = { ...wallet.value }
 
       storedWallets[wallet.value.id - 1] = { ...wallet.value }
@@ -346,10 +427,6 @@ const saveWallet = () => {
       })
     } else {
       wallet.value.id = createId(wallets.value.length)
-      wallet.value.appearance.icon =
-        wallet.value.type.toLowerCase() === 'savings' ? 'piggy-bank' : 'wallet'
-      wallet.value.appearance.color =
-        wallet.value.type.toLowerCase() === 'savings' ? 'green' : 'orange'
       wallets.value.push(wallet.value)
 
       storedWallets.push({ ...wallet.value })
@@ -367,12 +444,7 @@ const saveWallet = () => {
     getWallets()
 
     walletDialog.value = false
-    wallet.value = {
-      appearance: {
-        icon: '',
-        color: '',
-      },
-    }
+    wallet.value = {}
   }
 }
 
@@ -397,12 +469,8 @@ const deleteWallet = () => {
   getWallets()
 
   deleteWalletDialog.value = false
-  wallet.value = {
-    appearance: {
-      icon: '',
-      color: '',
-    },
-  }
+  wallet.value = {}
+
   toast.add({
     severity: 'success',
     summary: 'Successful',
@@ -421,14 +489,14 @@ const returnIcon = (icon) => {
     case 'wallet':
       return markRaw(IconWallet)
 
-    // case 'credit-card':
-    //   return markRaw(IconCreditCard)
+    case 'credit-card':
+      return markRaw(IconCreditCard)
 
     case 'piggy-bank':
       return markRaw(IconPiggyBank)
 
     default:
-      return markRaw(IconCreditCard)
+      return markRaw(IconWallet)
   }
 }
 </script>

@@ -31,6 +31,12 @@ export function getDateString(dateString) {
 }
 
 export function convertDateToWords(dateString) {
+  // Parse the input string as UTC
+  const utcDate = new Date(dateString)
+
+  // Convert to Philippine Time (UTC+8)
+  const phTime = new Date(utcDate.getTime() + 8 * 60 * 60 * 1000)
+
   const months = [
     'January',
     'February',
@@ -48,15 +54,13 @@ export function convertDateToWords(dateString) {
 
   const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 
-  // Create a new Date object from the date string
-  const date = new Date(dateString)
+  // Extract components from the Philippine time date
+  const dayOfWeek = days[phTime.getDay()]
+  const dayOfMonth = phTime.getDate()
+  const month = months[phTime.getMonth()]
+  const year = phTime.getFullYear()
 
-  // Extract the components
-  // const dayOfWeek = days[date.getUTCDay()]
-  const dayOfMonth = date.getUTCDate()
-  const month = months[date.getUTCMonth()]
-  const year = date.getUTCFullYear()
-
-  // Return the date in words
+  // Optional: include day of week
+  // return `${dayOfWeek}, ${month} ${dayOfMonth}, ${year}`
   return `${month} ${dayOfMonth}, ${year}`
 }

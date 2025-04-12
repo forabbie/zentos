@@ -6,10 +6,8 @@ export const getWalletsData = () => {
       type: 'spending',
       balance: 0,
       currency: 'PHP',
-      appearance: {
-        color: 'blue',
-        icon: 'wallet',
-      },
+      color: '#3b82f6',
+      icon: 'wallet',
     },
     {
       id: 2,
@@ -17,10 +15,8 @@ export const getWalletsData = () => {
       type: 'savings',
       balance: 0,
       currency: 'PHP',
-      appearance: {
-        color: 'green',
-        icon: 'piggy-bank',
-      },
+      color: '#22c55e',
+      icon: 'piggy-bank',
     },
   ]
   /* [

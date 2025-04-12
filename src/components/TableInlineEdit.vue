@@ -73,10 +73,10 @@
               <div
                 :class="[
                   'mr-4 flex size-12 shrink-0 items-center justify-center rounded-xl',
-                  returnColor(data.appearance.color).bg,
+                  returnColor(data.color).bg,
                 ]"
               >
-                <i :class="[returnColor(data.appearance.color).text]">
+                <i :class="[returnColor(data.color).text]">
                   <component :is="returnIcon(data.appearance.icon)" />
                 </i>
               </div>

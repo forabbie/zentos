@@ -17,7 +17,11 @@ const routes = [
     name: 'wallets',
     component: () => import('@/views/WalletsView.vue'),
   },
-  ,
+  {
+    path: '/misc',
+    name: 'misc',
+    component: () => import('@/views/MiscView.vue'),
+  },
   {
     path: '/:catchAll(.*)',
     redirect: { name: 'dashboard' },

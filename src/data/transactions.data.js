@@ -1,5 +1,58 @@
 export const getTransactionsData = () => {
-  return []
+  return [
+    {
+      date: '2025-04-11T16:00:00.000Z',
+      account_id: 1,
+      type: 'expense',
+      category_id: 4,
+      amount: 305,
+      id: 1,
+    },
+    {
+      type: 'income',
+      account_id: 1,
+      category_id: 34,
+      amount: 5000,
+      date: '2025-04-11T16:00:00.000Z',
+      id: 2,
+    },
+    {
+      account_id: 2,
+      type: 'income',
+      category_id: 34,
+      note: 'Bonus from work',
+      amount: 3000,
+      date: '2025-04-11T16:00:00.000Z',
+      id: 3,
+    },
+    {
+      id: 4,
+      type: 'income',
+      category_id: 24,
+      account_id: 2,
+      amount: 40000,
+      note: 'Web development project payment',
+      date: '2025-04-01T16:00:00.000Z',
+    },
+    {
+      type: 'expense',
+      account_id: 1,
+      category_id: 6,
+      amount: 5000,
+      date: '2025-04-07T16:00:00.000Z',
+      note: "Weekly grocery shopping'",
+      id: 5,
+    },
+    {
+      account_id: 2,
+      type: 'expense',
+      category_id: 9,
+      note: 'Electricity bill payment',
+      amount: 1200,
+      date: '2025-04-04T16:00:00.000Z',
+      id: 6,
+    },
+  ]
   // [
   //   {
   //     id: 1,

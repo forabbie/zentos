@@ -22,12 +22,12 @@
         <template #marker="slotProps">
           <span
             class="z-10 flex h-8 w-8 items-center justify-center rounded-full text-white shadow-sm"
-            :class="[returnColor(slotProps.item?.category.appearance.color).bg]"
+            :class="[returnColor(slotProps.item?.category.color).bg]"
           >
             <i
               :class="[
                 returnIcon(slotProps.item.type),
-                returnColor(slotProps.item?.category.appearance.color).text,
+                returnColor(slotProps.item?.category.color).text,
               ]"
             ></i>
           </span>
@@ -53,9 +53,9 @@ import { ref, onMounted, computed, watch } from 'vue'
 
 import Timeline from 'primevue/timeline'
 
-import { returnColor } from '@/utils/styles'
 import { convertDateToWords } from '@/utils/date'
-import { formatToCurrency } from '@/utils/format'
+import { formatToCurrency } from '@/utils/helper'
+import { returnColor } from '@/utils/helper'
 
 import { useGlobalStore } from '@/stores/global.store'
 import { useTransactionStore } from '@/stores/transactions.store'
