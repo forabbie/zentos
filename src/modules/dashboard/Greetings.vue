@@ -13,7 +13,8 @@
         view="month"
         dateFormat="MM, yy"
         :manualInput="false"
-        pt:pcInputText:root="!bg-indigo-500 hover:!bg-indigo-600 !border-transparent cursor-pointer !text-sm"
+        pt:root="custom-datepicker"
+        pt:pcInputText:root="!bg-indigo-500 hover:!bg-indigo-600 !border-transparent cursor-pointer !text-sm !text-white"
         pt:inputIcon="text-white"
         pt:panel="!text-sm"
       >
