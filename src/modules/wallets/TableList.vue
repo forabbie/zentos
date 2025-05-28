@@ -292,9 +292,11 @@ import { useToast } from 'primevue/usetoast'
 import { createId, formatToCurrency, hexToRgb } from '@/utils/helper'
 
 import { useWalletStore } from '@/stores/wallets.store'
+import { useTransactionStore } from '@/stores/transactions.store'
 
 const toast = useToast()
 const walletStore = useWalletStore()
+const transactionStore = useTransactionStore()
 
 const wallet = ref({})
 const wallets = ref(null)
@@ -383,6 +385,7 @@ const colorOptions = [
 
 onMounted(async () => {
   await getWallets()
+  await getTransactions(10, 1)
 })
 
 const getWallets = async () => {
@@ -391,8 +394,15 @@ const getWallets = async () => {
   })
 }
 
+const totalTransactions = ref(null)
 const walletDialog = ref(false)
 const deleteWalletDialog = ref(false)
+
+const getTransactions = async (limit, page) => {
+  await transactionStore.getTransactions({ limit, page }).then((data) => {
+    totalTransactions.value = data.total
+  })
+}
 
 const openNew = () => {
   wallet.value = {
@@ -414,11 +424,33 @@ const saveWallet = () => {
 
   if (wallet?.value.name?.trim()) {
     const storedWallets = walletStore.getWalletsDataFromLocalStorage()
+    const storedTransactions = transactionStore.getTransactionsDataFromLocalStorage()
 
     if (wallet.value.id) {
-      wallets.value[wallet.value.id - 1] = { ...wallet.value }
+      const walletIndex = wallet.value.id - 1
+      const oldWallet = storedWallets[walletIndex]
+      const updatedWallet = { ...wallet.value }
 
-      storedWallets[wallet.value.id - 1] = { ...wallet.value }
+      const balanceDiff = updatedWallet.balance - oldWallet.balance
+
+      // Log transaction if balance has changed
+      if (balanceDiff !== 0) {
+        const adjustmentTransaction = {
+          id: createId(storedTransactions.length),
+          type: balanceDiff > 0 ? 'income' : 'expense',
+          category_id: 1, // category id 1 is for transfer
+          account_id: updatedWallet.id,
+          amount: Math.abs(balanceDiff),
+          note: 'Manual balance adjustment',
+          date: new Date().toISOString(),
+        }
+
+        storedTransactions.push({ ...adjustmentTransaction })
+        walletStore.updateWalletBalance(adjustmentTransaction)
+      }
+
+      wallets.value[walletIndex] = updatedWallet
+      storedWallets[walletIndex] = updatedWallet
 
       toast.add({
         severity: 'success',
@@ -432,6 +464,22 @@ const saveWallet = () => {
 
       storedWallets.push({ ...wallet.value })
 
+      // Add initial deposit transaction if balance is set
+      if (wallet.value.balance && wallet.value.balance > 0) {
+        const initialTransaction = {
+          id: createId(totalTransactions.value),
+          type: 'income',
+          category_id: 1, // category id 1 is for transfer
+          account_id: wallet.value.id,
+          amount: wallet.value.balance,
+          note: 'Initial wallet balance',
+          date: new Date().toISOString(),
+        }
+
+        storedTransactions.push({ ...initialTransaction })
+        walletStore.updateWalletBalance(initialTransaction)
+      }
+
       toast.add({
         severity: 'success',
         summary: 'Successful',
@@ -441,6 +489,7 @@ const saveWallet = () => {
     }
 
     walletStore.saveWalletsDataToLocalStorage(storedWallets)
+    transactionStore.saveTransactionsDataToLocalStorage(storedTransactions)
 
     getWallets()
 
@@ -459,15 +508,13 @@ const confirmDeleteTransaction = (data) => {
   deleteWalletDialog.value = true
 }
 
-const deleteWallet = () => {
+const deleteWallet = async () => {
   const storedWallets = walletStore.getWalletsDataFromLocalStorage()
   const updatedWallets = storedWallets.filter((w) => w.id !== wallet.value.id)
 
   walletStore.saveWalletsDataToLocalStorage(updatedWallets)
 
   wallets.value = wallets.value.filter((w) => w.id !== wallet.value.id)
-
-  getWallets()
 
   deleteWalletDialog.value = false
   wallet.value = {}

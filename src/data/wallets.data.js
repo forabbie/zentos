@@ -1,23 +1,23 @@
 export const getWalletsData = () => {
   return [
-    {
-      id: 1,
-      name: 'Cash on Hand',
-      type: 'spending',
-      balance: 0,
-      currency: 'PHP',
-      color: '#3b82f6',
-      icon: 'wallet',
-    },
-    {
-      id: 2,
-      name: 'Cash on Bank',
-      type: 'savings',
-      balance: 0,
-      currency: 'PHP',
-      color: '#22c55e',
-      icon: 'piggy-bank',
-    },
+    // {
+    //   id: 1,
+    //   name: 'Cash on Hand',
+    //   type: 'spending',
+    //   balance: 0,
+    //   currency: 'PHP',
+    //   color: '#3b82f6',
+    //   icon: 'wallet',
+    // },
+    // {
+    //   id: 2,
+    //   name: 'Cash on Bank',
+    //   type: 'savings',
+    //   balance: 0,
+    //   currency: 'PHP',
+    //   color: '#22c55e',
+    //   icon: 'piggy-bank',
+    // },
   ]
   /* [
     {
